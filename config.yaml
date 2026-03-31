@@ -1,0 +1,76 @@
+streaming:
+  dataset: "uci"          # or "synthetic"
+  uci_batch_count: 10
+  batch_size: 100
+  drift_after: 4          # for reference only (real data has natural drift)
+  # Backward-compatible keys used by existing code paths
+  mode: uci               # synthetic | uci
+  n_batches: 10
+  n_features: 16
+  seed: 42
+
+uci_loader:
+  data_dir: data/raw
+  batch_numbers: null      # null means all 10 batches
+  normalize: true
+  use_ucimlrepo: true
+
+# Backward-compatible alias for current entrypoint code
+uci_streaming:
+  data_dir: data/raw
+  batch_numbers: null      # null means all 10 batches
+  normalize: true
+  use_ucimlrepo: true
+
+drift_detection:
+  delta: 0.005
+  threshold: 50.0
+  alpha: 0.9999
+
+planner:
+  w_drift: 0.4
+  w_accuracy: 0.3
+  w_cost: 0.3
+  alpha_ema: 0.7
+
+isolation_forest:
+  seed: 42
+
+dbscan:
+  base_eps: 1.5
+  min_samples: 5
+
+statistical_rules:
+  k_features: 4
+  corr_threshold: 0.3
+
+hypothesizer:
+  corr_threshold: 0.3
+  mi_threshold: 0.08          # for real MI
+  mi_decay_threshold: 0.05
+  n_features_check: 8
+  max_hypotheses_per_batch: 3
+  real_mi: true
+  use_decay_trigger: true
+  trigger_drift_score: 0.1
+  use_llm: false              # set to true when you want natural language
+  llm_max_words: 50
+
+llm:
+  provider: "ollama"
+  model: "phi3:mini"
+  temperature: 0.2
+
+validator:
+  p_threshold_real: 0.05
+  p_threshold_noisy: 0.10
+  noise_pct: 0.05
+
+provenance:
+  backend: "neo4j"       # or "dict" for fallback
+  export_path: provenance.json
+  neo4j:
+    uri: "bolt://localhost:7687"
+    user: "neo4j"
+    password: "password"   # change this in production
+    enabled: true

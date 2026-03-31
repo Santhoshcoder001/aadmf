@@ -1,0 +1,5 @@
+preset,w_drift,w_accuracy,w_cost,mean_quality_score,high_drift_mean_quality_score,drift_detection_latency,algorithm_selection_distribution
+Default,0.4,0.3,0.3,0.92,0.866667,,{'StatisticalRules': 10}
+Drift-dominant,0.7,0.2,0.1,0.92,0.866667,,{'StatisticalRules': 10}
+Accuracy-dominant,0.2,0.7,0.1,0.92,0.866667,,{'StatisticalRules': 10}
+Cost-dominant,0.1,0.2,0.7,0.92,0.866667,,{'StatisticalRules': 10}

@@ -1,0 +1,9 @@
+mode,drift_level,total_hypotheses,valid_hypotheses,hvr
+real_mi,overall,30,30,1.0
+real_mi,low,30,30,1.0
+real_mi,medium,0,0,0.0
+real_mi,high,0,0,0.0
+proxy_mi,overall,30,30,1.0
+proxy_mi,low,30,30,1.0
+proxy_mi,medium,0,0,0.0
+proxy_mi,high,0,0,0.0
