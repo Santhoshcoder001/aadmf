@@ -1,30 +1,40 @@
 [
   {
     "seq": 0,
-    "type": "SYSTEM_START",
-    "ts": 1774955757.1275938,
+    "type": "SYSTEM",
+    "ts": 1775476641.2885318,
     "details": {
-      "component": "ManualOrchestrator"
+      "message": "Provenance backend switch: Neo4j failed, using DictChainLogger. Error: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):\nFailed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [WinError 10061] No connection could be made because the target machine actively refused it)\nFailed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [WinError 10061] No connection could be made because the target machine actively refused it)"
     },
     "prev_hash": "GENESIS",
-    "hash": "87bd6ecc6881907d"
+    "hash": "bd1dc9ebc1958bc5"
   },
   {
     "seq": 1,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.1283004,
+    "type": "SYSTEM_START",
+    "ts": 1775476641.7177348,
     "details": {
-      "batch": 0,
-      "rows": 100,
-      "cols": 16
+      "component": "LangGraphOrchestrator"
     },
-    "prev_hash": "87bd6ecc6881907d",
-    "hash": "be498d3837dc81b7"
+    "prev_hash": "bd1dc9ebc1958bc5",
+    "hash": "65e9d706436db528"
   },
   {
     "seq": 2,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.128607,
+    "type": "DATA_INGESTED",
+    "ts": 1775476656.1374469,
+    "details": {
+      "batch": 0,
+      "rows": 1391,
+      "cols": 128
+    },
+    "prev_hash": "65e9d706436db528",
+    "hash": "91d38b7a7435b7e4"
+  },
+  {
+    "seq": 3,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476656.1459403,
     "details": {
       "batch_id": 0,
       "drift_score": 0.0,
@@ -33,15 +43,20 @@
         "DBSCAN": 0.32999999999999996,
         "StatisticalRules": 0.42000000000000004
       },
-      "chosen_algorithm": "StatisticalRules"
+      "chosen_algorithm": "StatisticalRules",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
     },
-    "prev_hash": "be498d3837dc81b7",
-    "hash": "3d27edfe36888bbc"
+    "prev_hash": "91d38b7a7435b7e4",
+    "hash": "dff1f491241d7d51"
   },
   {
-    "seq": 3,
+    "seq": 4,
     "type": "MINING_RESULT",
-    "ts": 1774955757.1356099,
+    "ts": 1775476656.1582026,
     "details": {
       "batch_id": 0,
       "chosen_algorithm": "StatisticalRules",
@@ -54,25 +69,25 @@
         "quality_score": 0.0
       }
     },
-    "prev_hash": "3d27edfe36888bbc",
-    "hash": "463b23866c58ff3a"
-  },
-  {
-    "seq": 4,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.135905,
-    "details": {
-      "batch": 1,
-      "rows": 100,
-      "cols": 16
-    },
-    "prev_hash": "463b23866c58ff3a",
-    "hash": "ac88149ee16ab48f"
+    "prev_hash": "dff1f491241d7d51",
+    "hash": "8eff0f10d8d661f4"
   },
   {
     "seq": 5,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.136052,
+    "type": "DATA_INGESTED",
+    "ts": 1775476656.1596704,
+    "details": {
+      "batch": 1,
+      "rows": 1391,
+      "cols": 128
+    },
+    "prev_hash": "8eff0f10d8d661f4",
+    "hash": "8ee840164e3c5d83"
+  },
+  {
+    "seq": 6,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476656.1617467,
     "details": {
       "batch_id": 1,
       "drift_score": 0.0,
@@ -81,15 +96,20 @@
         "DBSCAN": 0.32999999999999996,
         "StatisticalRules": 0.375
       },
-      "chosen_algorithm": "StatisticalRules"
+      "chosen_algorithm": "StatisticalRules",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
     },
-    "prev_hash": "ac88149ee16ab48f",
-    "hash": "55a3de496cd7a8ed"
+    "prev_hash": "8ee840164e3c5d83",
+    "hash": "d1af36c5ec8f5fa4"
   },
   {
-    "seq": 6,
+    "seq": 7,
     "type": "MINING_RESULT",
-    "ts": 1774955757.1389418,
+    "ts": 1775476656.1709456,
     "details": {
       "batch_id": 1,
       "chosen_algorithm": "StatisticalRules",
@@ -102,25 +122,25 @@
         "quality_score": 0.0
       }
     },
-    "prev_hash": "55a3de496cd7a8ed",
-    "hash": "82f5211cc3ed9c6e"
-  },
-  {
-    "seq": 7,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.139168,
-    "details": {
-      "batch": 2,
-      "rows": 100,
-      "cols": 16
-    },
-    "prev_hash": "82f5211cc3ed9c6e",
-    "hash": "fb3f2263e1e15b8d"
+    "prev_hash": "d1af36c5ec8f5fa4",
+    "hash": "490551420bbc7187"
   },
   {
     "seq": 8,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.1392996,
+    "type": "DATA_INGESTED",
+    "ts": 1775476656.1723819,
+    "details": {
+      "batch": 2,
+      "rows": 1391,
+      "cols": 128
+    },
+    "prev_hash": "490551420bbc7187",
+    "hash": "3ba99871f10ab8cb"
+  },
+  {
+    "seq": 9,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476656.1743896,
     "details": {
       "batch_id": 2,
       "drift_score": 0.0,
@@ -129,372 +149,412 @@
         "DBSCAN": 0.32999999999999996,
         "StatisticalRules": 0.3435
       },
-      "chosen_algorithm": "IsolationForest"
+      "chosen_algorithm": "IsolationForest",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
     },
-    "prev_hash": "fb3f2263e1e15b8d",
-    "hash": "a82b031b02fce576"
+    "prev_hash": "3ba99871f10ab8cb",
+    "hash": "706f520740e2d3c2"
   },
   {
-    "seq": 9,
+    "seq": 10,
     "type": "MINING_RESULT",
-    "ts": 1774955757.2800546,
+    "ts": 1775476656.425034,
     "details": {
       "batch_id": 2,
       "chosen_algorithm": "IsolationForest",
       "drift_score": 0.0,
-      "quality_score": 0.9,
+      "quality_score": 1.0,
       "result": {
         "algorithm": "IsolationForest",
         "contamination": 0.1,
-        "anomalies": 10,
-        "anomaly_rate": 0.1,
-        "quality_score": 0.9
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
       }
     },
-    "prev_hash": "a82b031b02fce576",
-    "hash": "5886cba548d506ca"
-  },
-  {
-    "seq": 10,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.2805622,
-    "details": {
-      "batch": 3,
-      "rows": 100,
-      "cols": 16
-    },
-    "prev_hash": "5886cba548d506ca",
-    "hash": "420008e42e537ea4"
+    "prev_hash": "706f520740e2d3c2",
+    "hash": "e5f83f808d423c2c"
   },
   {
     "seq": 11,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.2808592,
+    "type": "DATA_INGESTED",
+    "ts": 1775476656.4264686,
     "details": {
-      "batch_id": 3,
-      "drift_score": 0.0034500049425520646,
-      "algorithm_scores": {
-        "IsolationForest": 0.3972420017793188,
-        "DBSCAN": 0.3308280011862125,
-        "StatisticalRules": 0.34405200079080833
-      },
-      "chosen_algorithm": "IsolationForest"
+      "batch": 3,
+      "rows": 1391,
+      "cols": 128
     },
-    "prev_hash": "420008e42e537ea4",
-    "hash": "85d60d3df01f15eb"
+    "prev_hash": "e5f83f808d423c2c",
+    "hash": "9610cbe87f988538"
   },
   {
     "seq": 12,
-    "type": "MINING_RESULT",
-    "ts": 1774955757.4178107,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476656.428566,
     "details": {
       "batch_id": 3,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.405,
+        "DBSCAN": 0.32999999999999996,
+        "StatisticalRules": 0.3435
+      },
       "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.0034500049425520646,
-      "quality_score": 0.9,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.10069000098851041,
-        "anomalies": 10,
-        "anomaly_rate": 0.1,
-        "quality_score": 0.9
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
       }
     },
-    "prev_hash": "85d60d3df01f15eb",
-    "hash": "5627f56586dbd597"
+    "prev_hash": "9610cbe87f988538",
+    "hash": "49ee27d939586142"
   },
   {
     "seq": 13,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.418246,
+    "type": "MINING_RESULT",
+    "ts": 1775476656.6594915,
     "details": {
-      "batch": 4,
-      "rows": 100,
-      "cols": 16
+      "batch_id": 3,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 0.0,
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.1,
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
+      }
     },
-    "prev_hash": "5627f56586dbd597",
-    "hash": "d0d5bda52bffaa65"
+    "prev_hash": "49ee27d939586142",
+    "hash": "c24d5e3d279b6054"
   },
   {
     "seq": 14,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.418471,
+    "type": "DATA_INGESTED",
+    "ts": 1775476656.6609042,
     "details": {
-      "batch_id": 4,
-      "drift_score": 0.005116531062904526,
-      "algorithm_scores": {
-        "IsolationForest": 0.42304195118264565,
-        "DBSCAN": 0.3312279674550971,
-        "StatisticalRules": 0.3443186449700647
-      },
-      "chosen_algorithm": "IsolationForest"
+      "batch": 4,
+      "rows": 1391,
+      "cols": 128
     },
-    "prev_hash": "d0d5bda52bffaa65",
-    "hash": "6756da0dc97cd29f"
+    "prev_hash": "c24d5e3d279b6054",
+    "hash": "fa16499277e363c5"
   },
   {
     "seq": 15,
-    "type": "MINING_RESULT",
-    "ts": 1774955757.5798612,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476656.662834,
     "details": {
       "batch_id": 4,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.4365,
+        "DBSCAN": 0.32999999999999996,
+        "StatisticalRules": 0.3435
+      },
       "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.005116531062904526,
-      "quality_score": 0.89,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1010233062125809,
-        "anomalies": 11,
-        "anomaly_rate": 0.11,
-        "quality_score": 0.89
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
       }
     },
-    "prev_hash": "6756da0dc97cd29f",
-    "hash": "f49b0c4602c1acee"
+    "prev_hash": "fa16499277e363c5",
+    "hash": "0c0181ef83fc6c32"
   },
   {
     "seq": 16,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.5803618,
+    "type": "MINING_RESULT",
+    "ts": 1775476656.8954134,
     "details": {
-      "batch": 5,
-      "rows": 100,
-      "cols": 16
+      "batch_id": 4,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 0.0,
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.1,
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
+      }
     },
-    "prev_hash": "f49b0c4602c1acee",
-    "hash": "3cdf6dfde3a48f4b"
+    "prev_hash": "0c0181ef83fc6c32",
+    "hash": "9767446ed53dc744"
   },
   {
     "seq": 17,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.580628,
+    "type": "DATA_INGESTED",
+    "ts": 1775476656.896715,
     "details": {
-      "batch_id": 5,
-      "drift_score": 0.0020002062993071277,
-      "algorithm_scores": {
-        "IsolationForest": 0.43866007426775055,
-        "DBSCAN": 0.33048004951183374,
-        "StatisticalRules": 0.34382003300788916
-      },
-      "chosen_algorithm": "IsolationForest"
+      "batch": 5,
+      "rows": 1391,
+      "cols": 128
     },
-    "prev_hash": "3cdf6dfde3a48f4b",
-    "hash": "be17e92786088931"
+    "prev_hash": "9767446ed53dc744",
+    "hash": "9c0a726ec7cdc13c"
   },
   {
     "seq": 18,
-    "type": "MINING_RESULT",
-    "ts": 1774955757.7143698,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476656.8986185,
     "details": {
       "batch_id": 5,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.45855,
+        "DBSCAN": 0.32999999999999996,
+        "StatisticalRules": 0.3435
+      },
       "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.0020002062993071277,
-      "quality_score": 0.9,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.10040004125986143,
-        "anomalies": 10,
-        "anomaly_rate": 0.1,
-        "quality_score": 0.9
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
       }
     },
-    "prev_hash": "be17e92786088931",
-    "hash": "303c82795bece80d"
+    "prev_hash": "9c0a726ec7cdc13c",
+    "hash": "c7e99bda3e95e135"
   },
   {
     "seq": 19,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.7148106,
+    "type": "MINING_RESULT",
+    "ts": 1775476657.1351516,
     "details": {
-      "batch": 6,
-      "rows": 100,
-      "cols": 16
+      "batch_id": 5,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 0.0,
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.1,
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
+      }
     },
-    "prev_hash": "303c82795bece80d",
-    "hash": "213743375f01472f"
+    "prev_hash": "c7e99bda3e95e135",
+    "hash": "faa27a10a7ada7f0"
   },
   {
     "seq": 20,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.715027,
+    "type": "DATA_INGESTED",
+    "ts": 1775476657.1364963,
     "details": {
-      "batch_id": 6,
-      "drift_score": 0.009392362670154013,
-      "algorithm_scores": {
-        "IsolationForest": 0.4539392505612555,
-        "DBSCAN": 0.332254167040837,
-        "StatisticalRules": 0.3450027780272247
-      },
-      "chosen_algorithm": "IsolationForest"
+      "batch": 6,
+      "rows": 1391,
+      "cols": 128
     },
-    "prev_hash": "213743375f01472f",
-    "hash": "4e3d83115308bf8d"
+    "prev_hash": "faa27a10a7ada7f0",
+    "hash": "b64bda21edda2c97"
   },
   {
     "seq": 21,
-    "type": "MINING_RESULT",
-    "ts": 1774955757.867836,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476657.1385074,
     "details": {
       "batch_id": 6,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.473985,
+        "DBSCAN": 0.32999999999999996,
+        "StatisticalRules": 0.3435
+      },
       "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.009392362670154013,
-      "quality_score": 0.89,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1018784725340308,
-        "anomalies": 11,
-        "anomaly_rate": 0.11,
-        "quality_score": 0.89
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
       }
     },
-    "prev_hash": "4e3d83115308bf8d",
-    "hash": "ddbcbdabbfb89e78"
+    "prev_hash": "b64bda21edda2c97",
+    "hash": "1ab413a32a1b3665"
   },
   {
     "seq": 22,
-    "type": "DATA_INGESTED",
-    "ts": 1774955757.8682601,
+    "type": "MINING_RESULT",
+    "ts": 1775476657.3752673,
     "details": {
-      "batch": 7,
-      "rows": 100,
-      "cols": 16
+      "batch_id": 6,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 0.0,
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.1,
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
+      }
     },
-    "prev_hash": "ddbcbdabbfb89e78",
-    "hash": "e0a72713db4cfe6a"
+    "prev_hash": "1ab413a32a1b3665",
+    "hash": "9759c861b1795d91"
   },
   {
     "seq": 23,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955757.8684764,
+    "type": "DATA_INGESTED",
+    "ts": 1775476657.3766475,
     "details": {
-      "batch_id": 7,
-      "drift_score": 0.02142353715651038,
-      "algorithm_scores": {
-        "IsolationForest": 0.4662030733763437,
-        "DBSCAN": 0.3351416489175625,
-        "StatisticalRules": 0.34692776594504166
-      },
-      "chosen_algorithm": "IsolationForest"
+      "batch": 7,
+      "rows": 1391,
+      "cols": 128
     },
-    "prev_hash": "e0a72713db4cfe6a",
-    "hash": "ec332f1db19b8108"
+    "prev_hash": "9759c861b1795d91",
+    "hash": "9c4413abc16fd7dd"
   },
   {
     "seq": 24,
-    "type": "MINING_RESULT",
-    "ts": 1774955758.0155523,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476657.378607,
     "details": {
       "batch_id": 7,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.4847895,
+        "DBSCAN": 0.32999999999999996,
+        "StatisticalRules": 0.3435
+      },
       "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.02142353715651038,
-      "quality_score": 0.89,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.10428470743130208,
-        "anomalies": 11,
-        "anomaly_rate": 0.11,
-        "quality_score": 0.89
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
       }
     },
-    "prev_hash": "ec332f1db19b8108",
-    "hash": "767a1091d5d9bb81"
+    "prev_hash": "9c4413abc16fd7dd",
+    "hash": "cdd3531bdcd8c76d"
   },
   {
     "seq": 25,
-    "type": "DATA_INGESTED",
-    "ts": 1774955758.015993,
+    "type": "MINING_RESULT",
+    "ts": 1775476657.6133883,
     "details": {
-      "batch": 8,
-      "rows": 100,
-      "cols": 16
+      "batch_id": 7,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 0.0,
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.1,
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
+      }
     },
-    "prev_hash": "767a1091d5d9bb81",
-    "hash": "39da437f7e849d4b"
+    "prev_hash": "cdd3531bdcd8c76d",
+    "hash": "47d6077a1c814c9f"
   },
   {
     "seq": 26,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955758.0162187,
+    "type": "DATA_INGESTED",
+    "ts": 1775476657.6146798,
     "details": {
-      "batch_id": 8,
-      "drift_score": 0.04172587492293736,
-      "algorithm_scores": {
-        "IsolationForest": 0.47906473497225743,
-        "DBSCAN": 0.34001420998150494,
-        "StatisticalRules": 0.35017613998767
-      },
-      "chosen_algorithm": "IsolationForest"
+      "batch": 8,
+      "rows": 1391,
+      "cols": 128
     },
-    "prev_hash": "39da437f7e849d4b",
-    "hash": "9d69bd92ee15a7e1"
+    "prev_hash": "47d6077a1c814c9f",
+    "hash": "b955eb89d4f5e351"
   },
   {
     "seq": 27,
-    "type": "MINING_RESULT",
-    "ts": 1774955758.1513636,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476657.6166272,
     "details": {
       "batch_id": 8,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.49235264999999995,
+        "DBSCAN": 0.32999999999999996,
+        "StatisticalRules": 0.3435
+      },
       "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.04172587492293736,
-      "quality_score": 0.89,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.10834517498458748,
-        "anomalies": 11,
-        "anomaly_rate": 0.11,
-        "quality_score": 0.89
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
       }
     },
-    "prev_hash": "9d69bd92ee15a7e1",
-    "hash": "15f5473591cbfe44"
+    "prev_hash": "b955eb89d4f5e351",
+    "hash": "aec65b2be45310e0"
   },
   {
     "seq": 28,
-    "type": "DATA_INGESTED",
-    "ts": 1774955758.1517973,
+    "type": "MINING_RESULT",
+    "ts": 1775476657.8496032,
     "details": {
-      "batch": 9,
-      "rows": 100,
-      "cols": 16
+      "batch_id": 8,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 0.0,
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.1,
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
+      }
     },
-    "prev_hash": "15f5473591cbfe44",
-    "hash": "d968febfb8f45118"
+    "prev_hash": "aec65b2be45310e0",
+    "hash": "45ef137c8df1dd75"
   },
   {
     "seq": 29,
-    "type": "PLANNER_DECISION",
-    "ts": 1774955758.1520193,
+    "type": "DATA_INGESTED",
+    "ts": 1775476657.8509212,
     "details": {
-      "batch_id": 9,
-      "drift_score": 0.07634558942057108,
-      "algorithm_scores": {
-        "IsolationForest": 0.49541480619140554,
-        "DBSCAN": 0.348322941460937,
-        "StatisticalRules": 0.3557152943072914
-      },
-      "chosen_algorithm": "IsolationForest"
+      "batch": 9,
+      "rows": 1391,
+      "cols": 128
     },
-    "prev_hash": "d968febfb8f45118",
-    "hash": "252680fc27f38011"
+    "prev_hash": "45ef137c8df1dd75",
+    "hash": "bb153b108b917cbb"
   },
   {
     "seq": 30,
+    "type": "ALGO_SELECTED",
+    "ts": 1775476657.8529198,
+    "details": {
+      "batch_id": 9,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.49764685499999994,
+        "DBSCAN": 0.32999999999999996,
+        "StatisticalRules": 0.3435
+      },
+      "chosen_algorithm": "IsolationForest",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
+    },
+    "prev_hash": "bb153b108b917cbb",
+    "hash": "6e6a217281faafc4"
+  },
+  {
+    "seq": 31,
     "type": "MINING_RESULT",
-    "ts": 1774955758.2856283,
+    "ts": 1775476658.0836911,
     "details": {
       "batch_id": 9,
       "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.07634558942057108,
-      "quality_score": 0.88,
+      "drift_score": 0.0,
+      "quality_score": 1.0,
       "result": {
         "algorithm": "IsolationForest",
-        "contamination": 0.11526911788411423,
-        "anomalies": 12,
-        "anomaly_rate": 0.12,
-        "quality_score": 0.88
+        "contamination": 0.1,
+        "anomalies": 0,
+        "anomaly_rate": 0.0,
+        "quality_score": 1.0
       }
     },
-    "prev_hash": "252680fc27f38011",
-    "hash": "5a17885b131e5e6f"
+    "prev_hash": "6e6a217281faafc4",
+    "hash": "bf51fcb8d258f99f"
   }
 ]

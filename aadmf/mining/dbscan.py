@@ -40,7 +40,7 @@ class DBSCANMiner(BaseMiner):
             min_samples=min_samples,
             metric="euclidean",
             algorithm="auto",
-            n_jobs=-1,
+            n_jobs=int(self.config.get("n_jobs", 1)),
         )
         labels = model.fit_predict(X_scaled)
 

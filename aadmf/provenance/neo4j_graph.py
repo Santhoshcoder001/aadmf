@@ -39,6 +39,7 @@ class Neo4jLogger:
             raise ValueError("Neo4j password is required")
 
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
+        self._closed = False
         self.prev_hash = "GENESIS"
         self._ensure_schema()
         self._sync_prev_hash()
@@ -64,7 +65,16 @@ class Neo4jLogger:
 
     def close(self) -> None:
         """Close Neo4j driver resources."""
-        self.driver.close()
+        if not self._closed:
+            self.driver.close()
+            self._closed = True
+
+    def __del__(self) -> None:
+        """Best-effort cleanup to avoid unclosed driver warnings."""
+        try:
+            self.close()
+        except Exception:
+            pass
 
     def _ensure_schema(self) -> None:
         """Create lightweight constraints/indexes for event lookup."""

@@ -37,7 +37,7 @@ class IFMiner(BaseMiner):
             contamination=contamination,
             max_samples="auto",
             random_state=self.config.get("seed", 42),
-            n_jobs=-1,
+            n_jobs=int(self.config.get("n_jobs", 1)),
         )
         preds = model.fit_predict(X_scaled)
 

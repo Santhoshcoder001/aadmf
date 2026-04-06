@@ -55,6 +55,12 @@ def _load_config(path: str = "config.yaml") -> dict:
     config["uci_streaming"]["batch_numbers"] = list(range(1, 11))
     config["uci_streaming"]["use_ucimlrepo"] = False
 
+    # Keep this parity test independent from external Neo4j availability.
+    config.setdefault("provenance", {})
+    config["provenance"]["backend"] = "dict"
+    config["provenance"].setdefault("neo4j", {})
+    config["provenance"]["neo4j"]["enabled"] = False
+
     return config
 
 
@@ -129,35 +135,41 @@ def _run_parity_test(config: dict) -> None:
     manual_loader = _make_loader(config)
     graph_loader = _make_loader(config)
 
-    # Validator uses random noise; reseed each run for reproducibility.
-    np.random.seed(12345)
-    manual_results = manual.run(manual_loader)
+    try:
+        # Validator uses random noise; reseed each run for reproducibility.
+        np.random.seed(12345)
+        manual_results = manual.run(manual_loader)
 
-    np.random.seed(12345)
-    graph_results = langgraph.run_graph(graph_loader)
+        np.random.seed(12345)
+        graph_results = langgraph.run_graph(graph_loader)
 
-    manual_df = manual_results["results_df"]
-    graph_df = graph_results["results_df"]
+        manual_df = manual_results["results_df"]
+        graph_df = graph_results["results_df"]
 
-    assert len(manual_df) == 10, f"Expected 10 manual batches, got {len(manual_df)}"
-    assert len(graph_df) == 10, f"Expected 10 graph batches, got {len(graph_df)}"
+        assert len(manual_df) == 10, f"Expected 10 manual batches, got {len(manual_df)}"
+        assert len(graph_df) == 10, f"Expected 10 graph batches, got {len(graph_df)}"
 
-    manual_key = _results_keyframe(manual_df)
-    graph_key = _results_keyframe(graph_df)
+        manual_key = _results_keyframe(manual_df)
+        graph_key = _results_keyframe(graph_df)
 
-    if not manual_key.equals(graph_key):
-        merged = manual_key.merge(
-            graph_key,
-            on="batch_id",
-            suffixes=("_manual", "_langgraph"),
-            how="outer",
-        )
-        raise AssertionError(
-            "Manual and LangGraph results differ on key metrics.\n"
-            f"Manual:\n{manual_key.to_string(index=False)}\n\n"
-            f"LangGraph:\n{graph_key.to_string(index=False)}\n\n"
-            f"Merged diff view:\n{merged.to_string(index=False)}"
-        )
+        if not manual_key.equals(graph_key):
+            merged = manual_key.merge(
+                graph_key,
+                on="batch_id",
+                suffixes=("_manual", "_langgraph"),
+                how="outer",
+            )
+            raise AssertionError(
+                "Manual and LangGraph results differ on key metrics.\n"
+                f"Manual:\n{manual_key.to_string(index=False)}\n\n"
+                f"LangGraph:\n{graph_key.to_string(index=False)}\n\n"
+                f"Merged diff view:\n{merged.to_string(index=False)}"
+            )
+    finally:
+        if hasattr(manual.prov, "close"):
+            manual.prov.close()
+        if hasattr(langgraph.prov, "close") and langgraph.prov is not manual.prov:
+            langgraph.prov.close()
 
 
 def _run_conditional_routing_tests(config: dict) -> None:
@@ -186,12 +198,16 @@ def _run_conditional_routing_tests(config: dict) -> None:
     low_graph.validator.run = low_val_wrapper
     low_graph.detector.update = lambda X_: (False, 0.0)
 
-    low_compiled = low_graph.compile()
-    low_state = low_compiled.invoke(_build_state(0, X, y))
+    try:
+        low_compiled = low_graph.compile()
+        low_state = low_compiled.invoke(_build_state(0, X, y))
 
-    assert low_calls["hyp"] == 0, "Low drift should skip hypothesizer"
-    assert low_calls["val"] == 0, "Low drift should skip validator"
-    assert low_state["hypotheses"] == [], "Low drift path should keep hypotheses empty"
+        assert low_calls["hyp"] == 0, "Low drift should skip hypothesizer"
+        assert low_calls["val"] == 0, "Low drift should skip validator"
+        assert low_state["hypotheses"] == [], "Low drift path should keep hypotheses empty"
+    finally:
+        if hasattr(low_graph.prov, "close"):
+            low_graph.prov.close()
 
     # High drift case: branch should run hypothesizer/validator.
     high_graph = LangGraphOrchestrator(copy.deepcopy(config))
@@ -212,11 +228,15 @@ def _run_conditional_routing_tests(config: dict) -> None:
     high_graph.validator.run = high_val_wrapper
     high_graph.detector.update = lambda X_: (True, 1.0)
 
-    high_compiled = high_graph.compile()
-    _ = high_compiled.invoke(_build_state(0, X, y))
+    try:
+        high_compiled = high_graph.compile()
+        _ = high_compiled.invoke(_build_state(0, X, y))
 
-    assert high_calls["hyp"] > 0, "High drift should run hypothesizer"
-    assert high_calls["val"] > 0, "High drift should run validator"
+        assert high_calls["hyp"] > 0, "High drift should run hypothesizer"
+        assert high_calls["val"] > 0, "High drift should run validator"
+    finally:
+        if hasattr(high_graph.prov, "close"):
+            high_graph.prov.close()
 
 
 def main() -> None:
