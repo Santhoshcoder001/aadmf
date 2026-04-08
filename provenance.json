@@ -2,45 +2,46 @@
   {
     "seq": 0,
     "type": "SYSTEM",
-    "ts": 1775476641.2885318,
+    "ts": 1775634893.20478,
     "details": {
-      "message": "Provenance backend switch: Neo4j failed, using DictChainLogger. Error: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):\nFailed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [WinError 10061] No connection could be made because the target machine actively refused it)\nFailed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [WinError 10061] No connection could be made because the target machine actively refused it)"
+      "message": "Provenance backend switch: Neo4j failed, using DictChainLogger. Install hint: pip install neo4j; start Neo4j Desktop/Docker; error: Neo4j connection failed. Start Neo4j Desktop or a Docker container, confirm Bolt is reachable at the configured URI, and verify credentials. Configured URI: bolt://localhost:7687. Original error: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):\nFailed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [WinError 10061] No connection could be made because the target machine actively refused it)\nFailed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [WinError 10061] No connection could be made because the target machine actively refused it)"
     },
     "prev_hash": "GENESIS",
-    "hash": "bd1dc9ebc1958bc5"
+    "hash": "b267d525babce19b"
   },
   {
     "seq": 1,
     "type": "SYSTEM_START",
-    "ts": 1775476641.7177348,
+    "ts": 1775634893.6399205,
     "details": {
       "component": "LangGraphOrchestrator"
     },
-    "prev_hash": "bd1dc9ebc1958bc5",
-    "hash": "65e9d706436db528"
+    "prev_hash": "b267d525babce19b",
+    "hash": "037aa7ba7daa9e06"
   },
   {
     "seq": 2,
     "type": "DATA_INGESTED",
-    "ts": 1775476656.1374469,
+    "ts": 1775634896.6541119,
     "details": {
       "batch": 0,
-      "rows": 1391,
+      "rows": 445,
       "cols": 128
     },
-    "prev_hash": "65e9d706436db528",
-    "hash": "91d38b7a7435b7e4"
+    "prev_hash": "037aa7ba7daa9e06",
+    "hash": "cb377447a9a8c786"
   },
   {
     "seq": 3,
     "type": "ALGO_SELECTED",
-    "ts": 1775476656.1459403,
+    "ts": 1775634896.6770842,
     "details": {
       "batch_id": 0,
       "drift_score": 0.0,
       "algorithm_scores": {
         "IsolationForest": 0.36,
         "DBSCAN": 0.32999999999999996,
+        "KMeans": 0.375,
         "StatisticalRules": 0.42000000000000004
       },
       "chosen_algorithm": "StatisticalRules",
@@ -50,482 +51,582 @@
         "cost": 0.3
       }
     },
-    "prev_hash": "91d38b7a7435b7e4",
-    "hash": "dff1f491241d7d51"
+    "prev_hash": "cb377447a9a8c786",
+    "hash": "0f677d4f405279c7"
   },
   {
     "seq": 4,
     "type": "MINING_RESULT",
-    "ts": 1775476656.1582026,
+    "ts": 1775634896.71644,
     "details": {
       "batch_id": 0,
       "chosen_algorithm": "StatisticalRules",
       "drift_score": 0.0,
-      "quality_score": 0.0,
+      "quality_score": 1.0,
       "result": {
         "algorithm": "StatisticalRules",
-        "rules_found": 0,
-        "top_rules": [],
-        "quality_score": 0.0
+        "rules_found": 6,
+        "top_rules": [
+          [
+            "sensor_2",
+            "sensor_3",
+            0.967602992337606
+          ],
+          [
+            "sensor_0",
+            "sensor_2",
+            0.8907528118883423
+          ],
+          [
+            "sensor_1",
+            "sensor_3",
+            0.8669864004951303
+          ]
+        ],
+        "quality_score": 1.0
       }
     },
-    "prev_hash": "dff1f491241d7d51",
-    "hash": "8eff0f10d8d661f4"
+    "prev_hash": "0f677d4f405279c7",
+    "hash": "12214347b9259b6b"
   },
   {
     "seq": 5,
-    "type": "DATA_INGESTED",
-    "ts": 1775476656.1596704,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634896.852426,
     "details": {
-      "batch": 1,
-      "rows": 1391,
-      "cols": 128
+      "batch_id": 0,
+      "drift_score": 0.0,
+      "drift_detected": false,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H0_14",
+        "H0_2",
+        "H0_6"
+      ],
+      "mi_history_size": 28
     },
-    "prev_hash": "8eff0f10d8d661f4",
-    "hash": "8ee840164e3c5d83"
+    "prev_hash": "12214347b9259b6b",
+    "hash": "5c32b62a80232083"
   },
   {
     "seq": 6,
-    "type": "ALGO_SELECTED",
-    "ts": 1775476656.1617467,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634896.8966713,
     "details": {
-      "batch_id": 1,
-      "drift_score": 0.0,
-      "algorithm_scores": {
-        "IsolationForest": 0.36,
-        "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.375
-      },
-      "chosen_algorithm": "StatisticalRules",
-      "scoring_weights": {
-        "drift": 0.4,
-        "accuracy": 0.3,
-        "cost": 0.3
-      }
+      "batch_id": 0,
+      "hypothesis_id": "H0_14",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_3",
+      "statement": "sensor_2 and sensor_3 show co-pattern (r=0.99, MI=0.76) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 4.200996670234584e-91,
+      "p_value_synthetic": 4.200996670234584e-91,
+      "chi2": 409.72791544506504,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "8ee840164e3c5d83",
-    "hash": "d1af36c5ec8f5fa4"
+    "prev_hash": "5c32b62a80232083",
+    "hash": "554ec7d17c0335f9"
   },
   {
     "seq": 7,
-    "type": "MINING_RESULT",
-    "ts": 1775476656.1709456,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634896.9156742,
     "details": {
-      "batch_id": 1,
-      "chosen_algorithm": "StatisticalRules",
-      "drift_score": 0.0,
-      "quality_score": 0.0,
-      "result": {
-        "algorithm": "StatisticalRules",
-        "rules_found": 0,
-        "top_rules": [],
-        "quality_score": 0.0
-      }
+      "batch_id": 0,
+      "hypothesis_id": "H0_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=0.97, MI=0.73) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 1.52267055198519e-84,
+      "p_value_synthetic": 3.6826168851526375e-86,
+      "chi2": 379.5974356530821,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "d1af36c5ec8f5fa4",
-    "hash": "490551420bbc7187"
+    "prev_hash": "554ec7d17c0335f9",
+    "hash": "ed6e6a47d408ab19"
   },
   {
     "seq": 8,
-    "type": "DATA_INGESTED",
-    "ts": 1775476656.1723819,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634896.9350302,
     "details": {
-      "batch": 2,
-      "rows": 1391,
-      "cols": 128
+      "batch_id": 0,
+      "hypothesis_id": "H0_6",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_6",
+      "statement": "sensor_0 and sensor_6 show co-pattern (r=-0.98, MI=0.72) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 2.8511483777819466e-90,
+      "p_value_synthetic": 1.2895164228349812e-88,
+      "chi2": 405.9072683486131,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "490551420bbc7187",
-    "hash": "3ba99871f10ab8cb"
+    "prev_hash": "ed6e6a47d408ab19",
+    "hash": "59bf3a69aa8f7105"
   },
   {
     "seq": 9,
+    "type": "DATA_INGESTED",
+    "ts": 1775634896.9363086,
+    "details": {
+      "batch": 1,
+      "rows": 1244,
+      "cols": 128
+    },
+    "prev_hash": "59bf3a69aa8f7105",
+    "hash": "7367cb8ef823caf4"
+  },
+  {
+    "seq": 10,
     "type": "ALGO_SELECTED",
-    "ts": 1775476656.1743896,
+    "ts": 1775634896.9384174,
+    "details": {
+      "batch_id": 1,
+      "drift_score": 0.011441085306892869,
+      "algorithm_scores": {
+        "IsolationForest": 0.3641187907104814,
+        "DBSCAN": 0.3327458604736543,
+        "KMeans": 0.37820350388592994,
+        "StatisticalRules": 0.46683057364910285
+      },
+      "chosen_algorithm": "StatisticalRules",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
+    },
+    "prev_hash": "7367cb8ef823caf4",
+    "hash": "a5873e7aea891fd4"
+  },
+  {
+    "seq": 11,
+    "type": "MINING_RESULT",
+    "ts": 1775634896.9478836,
+    "details": {
+      "batch_id": 1,
+      "chosen_algorithm": "StatisticalRules",
+      "drift_score": 0.011441085306892869,
+      "quality_score": 0.6,
+      "result": {
+        "algorithm": "StatisticalRules",
+        "rules_found": 3,
+        "top_rules": [
+          [
+            "sensor_2",
+            "sensor_3",
+            0.908822304811586
+          ],
+          [
+            "sensor_0",
+            "sensor_2",
+            0.8693500458021105
+          ],
+          [
+            "sensor_0",
+            "sensor_3",
+            0.7777048925453756
+          ]
+        ],
+        "quality_score": 0.6
+      }
+    },
+    "prev_hash": "a5873e7aea891fd4",
+    "hash": "ec3d954ca4b6b2dd"
+  },
+  {
+    "seq": 12,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634897.0791302,
+    "details": {
+      "batch_id": 1,
+      "drift_score": 0.011441085306892869,
+      "drift_detected": false,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H1_5",
+        "H1_16",
+        "H1_2"
+      ],
+      "mi_history_size": 28
+    },
+    "prev_hash": "ec3d954ca4b6b2dd",
+    "hash": "1380b5e1d5c68835"
+  },
+  {
+    "seq": 13,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.1109812,
+    "details": {
+      "batch_id": 1,
+      "hypothesis_id": "H1_5",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_5",
+      "statement": "sensor_0 and sensor_5 show co-pattern (r=-1.00, MI=1.32) in stable regime [drift_score=0.0114] -> investigate combined feature for gas classification",
+      "p_value_chi2": 5.0204647259635365e-263,
+      "p_value_synthetic": 1.2744780960914602e-259,
+      "chi2": 1200.3890675241157,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "1380b5e1d5c68835",
+    "hash": "61fc4fbf010578d1"
+  },
+  {
+    "seq": 14,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.1387787,
+    "details": {
+      "batch_id": 1,
+      "hypothesis_id": "H1_16",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_5",
+      "statement": "sensor_2 and sensor_5 show co-pattern (r=-0.99, MI=1.15) in stable regime [drift_score=0.0114] -> investigate combined feature for gas classification",
+      "p_value_chi2": 7.039413184667025e-253,
+      "p_value_synthetic": 7.039413184667025e-253,
+      "chi2": 1153.7009646302251,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "61fc4fbf010578d1",
+    "hash": "0a6c22b012e09f49"
+  },
+  {
+    "seq": 15,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.1715188,
+    "details": {
+      "batch_id": 1,
+      "hypothesis_id": "H1_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=0.98, MI=1.09) in stable regime [drift_score=0.0114] -> investigate combined feature for gas classification",
+      "p_value_chi2": 6.2987584426551305e-258,
+      "p_value_synthetic": 1.5316254879492263e-249,
+      "chi2": 1176.9292604501609,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "0a6c22b012e09f49",
+    "hash": "a85267d64771c29e"
+  },
+  {
+    "seq": 16,
+    "type": "DATA_INGESTED",
+    "ts": 1775634897.1728013,
+    "details": {
+      "batch": 2,
+      "rows": 1586,
+      "cols": 128
+    },
+    "prev_hash": "a85267d64771c29e",
+    "hash": "ce4b4346582b7b40"
+  },
+  {
+    "seq": 17,
+    "type": "ALGO_SELECTED",
+    "ts": 1775634897.174898,
     "details": {
       "batch_id": 2,
       "drift_score": 0.0,
       "algorithm_scores": {
         "IsolationForest": 0.36,
         "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
+        "KMeans": 0.375,
+        "StatisticalRules": 0.4605
       },
-      "chosen_algorithm": "IsolationForest",
+      "chosen_algorithm": "StatisticalRules",
       "scoring_weights": {
         "drift": 0.4,
         "accuracy": 0.3,
         "cost": 0.3
       }
     },
-    "prev_hash": "3ba99871f10ab8cb",
-    "hash": "706f520740e2d3c2"
-  },
-  {
-    "seq": 10,
-    "type": "MINING_RESULT",
-    "ts": 1775476656.425034,
-    "details": {
-      "batch_id": 2,
-      "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.0,
-      "quality_score": 1.0,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
-        "quality_score": 1.0
-      }
-    },
-    "prev_hash": "706f520740e2d3c2",
-    "hash": "e5f83f808d423c2c"
-  },
-  {
-    "seq": 11,
-    "type": "DATA_INGESTED",
-    "ts": 1775476656.4264686,
-    "details": {
-      "batch": 3,
-      "rows": 1391,
-      "cols": 128
-    },
-    "prev_hash": "e5f83f808d423c2c",
-    "hash": "9610cbe87f988538"
-  },
-  {
-    "seq": 12,
-    "type": "ALGO_SELECTED",
-    "ts": 1775476656.428566,
-    "details": {
-      "batch_id": 3,
-      "drift_score": 0.0,
-      "algorithm_scores": {
-        "IsolationForest": 0.405,
-        "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
-      },
-      "chosen_algorithm": "IsolationForest",
-      "scoring_weights": {
-        "drift": 0.4,
-        "accuracy": 0.3,
-        "cost": 0.3
-      }
-    },
-    "prev_hash": "9610cbe87f988538",
-    "hash": "49ee27d939586142"
-  },
-  {
-    "seq": 13,
-    "type": "MINING_RESULT",
-    "ts": 1775476656.6594915,
-    "details": {
-      "batch_id": 3,
-      "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.0,
-      "quality_score": 1.0,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
-        "quality_score": 1.0
-      }
-    },
-    "prev_hash": "49ee27d939586142",
-    "hash": "c24d5e3d279b6054"
-  },
-  {
-    "seq": 14,
-    "type": "DATA_INGESTED",
-    "ts": 1775476656.6609042,
-    "details": {
-      "batch": 4,
-      "rows": 1391,
-      "cols": 128
-    },
-    "prev_hash": "c24d5e3d279b6054",
-    "hash": "fa16499277e363c5"
-  },
-  {
-    "seq": 15,
-    "type": "ALGO_SELECTED",
-    "ts": 1775476656.662834,
-    "details": {
-      "batch_id": 4,
-      "drift_score": 0.0,
-      "algorithm_scores": {
-        "IsolationForest": 0.4365,
-        "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
-      },
-      "chosen_algorithm": "IsolationForest",
-      "scoring_weights": {
-        "drift": 0.4,
-        "accuracy": 0.3,
-        "cost": 0.3
-      }
-    },
-    "prev_hash": "fa16499277e363c5",
-    "hash": "0c0181ef83fc6c32"
-  },
-  {
-    "seq": 16,
-    "type": "MINING_RESULT",
-    "ts": 1775476656.8954134,
-    "details": {
-      "batch_id": 4,
-      "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.0,
-      "quality_score": 1.0,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
-        "quality_score": 1.0
-      }
-    },
-    "prev_hash": "0c0181ef83fc6c32",
-    "hash": "9767446ed53dc744"
-  },
-  {
-    "seq": 17,
-    "type": "DATA_INGESTED",
-    "ts": 1775476656.896715,
-    "details": {
-      "batch": 5,
-      "rows": 1391,
-      "cols": 128
-    },
-    "prev_hash": "9767446ed53dc744",
-    "hash": "9c0a726ec7cdc13c"
+    "prev_hash": "ce4b4346582b7b40",
+    "hash": "4fd94773ddbc6631"
   },
   {
     "seq": 18,
-    "type": "ALGO_SELECTED",
-    "ts": 1775476656.8986185,
+    "type": "MINING_RESULT",
+    "ts": 1775634897.1856978,
     "details": {
-      "batch_id": 5,
+      "batch_id": 2,
+      "chosen_algorithm": "StatisticalRules",
       "drift_score": 0.0,
-      "algorithm_scores": {
-        "IsolationForest": 0.45855,
-        "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
-      },
-      "chosen_algorithm": "IsolationForest",
-      "scoring_weights": {
-        "drift": 0.4,
-        "accuracy": 0.3,
-        "cost": 0.3
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "StatisticalRules",
+        "rules_found": 6,
+        "top_rules": [
+          [
+            "sensor_2",
+            "sensor_3",
+            0.9909593644563619
+          ],
+          [
+            "sensor_0",
+            "sensor_2",
+            0.9651601609424245
+          ],
+          [
+            "sensor_0",
+            "sensor_3",
+            0.955927583595167
+          ]
+        ],
+        "quality_score": 1.0
       }
     },
-    "prev_hash": "9c0a726ec7cdc13c",
-    "hash": "c7e99bda3e95e135"
+    "prev_hash": "4fd94773ddbc6631",
+    "hash": "a3ab149320849422"
   },
   {
     "seq": 19,
-    "type": "MINING_RESULT",
-    "ts": 1775476657.1351516,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634897.3277507,
     "details": {
-      "batch_id": 5,
-      "chosen_algorithm": "IsolationForest",
+      "batch_id": 2,
       "drift_score": 0.0,
-      "quality_score": 1.0,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
-        "quality_score": 1.0
-      }
+      "drift_detected": false,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H2_13",
+        "H2_15",
+        "H2_19"
+      ],
+      "mi_history_size": 28
     },
-    "prev_hash": "c7e99bda3e95e135",
-    "hash": "faa27a10a7ada7f0"
+    "prev_hash": "a3ab149320849422",
+    "hash": "cae5625098a5397c"
   },
   {
     "seq": 20,
-    "type": "DATA_INGESTED",
-    "ts": 1775476657.1364963,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.349343,
     "details": {
-      "batch": 6,
-      "rows": 1391,
-      "cols": 128
+      "batch_id": 2,
+      "hypothesis_id": "H2_13",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_3",
+      "statement": "sensor_2 and sensor_3 show co-pattern (r=1.00, MI=1.04) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 3.5187619229754838e-307,
+      "p_value_synthetic": 8.106255647739462e-309,
+      "chi2": 1403.5712484237074,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "faa27a10a7ada7f0",
-    "hash": "b64bda21edda2c97"
+    "prev_hash": "cae5625098a5397c",
+    "hash": "43079030ed30dc41"
   },
   {
     "seq": 21,
-    "type": "ALGO_SELECTED",
-    "ts": 1775476657.1385074,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.3688934,
     "details": {
-      "batch_id": 6,
-      "drift_score": 0.0,
-      "algorithm_scores": {
-        "IsolationForest": 0.473985,
-        "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
-      },
-      "chosen_algorithm": "IsolationForest",
-      "scoring_weights": {
-        "drift": 0.4,
-        "accuracy": 0.3,
-        "cost": 0.3
-      }
+      "batch_id": 2,
+      "hypothesis_id": "H2_15",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_5",
+      "statement": "sensor_2 and sensor_5 show co-pattern (r=-1.00, MI=1.03) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 1574.0226986128625,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "b64bda21edda2c97",
-    "hash": "1ab413a32a1b3665"
+    "prev_hash": "43079030ed30dc41",
+    "hash": "cbc78a1e074da400"
   },
   {
     "seq": 22,
-    "type": "MINING_RESULT",
-    "ts": 1775476657.3752673,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.387798,
     "details": {
-      "batch_id": 6,
-      "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.0,
-      "quality_score": 1.0,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
-        "quality_score": 1.0
-      }
+      "batch_id": 2,
+      "hypothesis_id": "H2_19",
+      "feature_a": "sensor_3",
+      "feature_b": "sensor_5",
+      "statement": "sensor_3 and sensor_5 show co-pattern (r=-0.99, MI=0.99) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 3.5187619229754838e-307,
+      "p_value_synthetic": 1.84872587185315e-310,
+      "chi2": 1403.5712484237074,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "1ab413a32a1b3665",
-    "hash": "9759c861b1795d91"
+    "prev_hash": "cbc78a1e074da400",
+    "hash": "a24550bf2d32645e"
   },
   {
     "seq": 23,
     "type": "DATA_INGESTED",
-    "ts": 1775476657.3766475,
+    "ts": 1775634897.3889606,
     "details": {
-      "batch": 7,
-      "rows": 1391,
+      "batch": 3,
+      "rows": 161,
       "cols": 128
     },
-    "prev_hash": "9759c861b1795d91",
-    "hash": "9c4413abc16fd7dd"
+    "prev_hash": "a24550bf2d32645e",
+    "hash": "1ad2a41d268fae9d"
   },
   {
     "seq": 24,
     "type": "ALGO_SELECTED",
-    "ts": 1775476657.378607,
+    "ts": 1775634897.3908758,
     "details": {
-      "batch_id": 7,
+      "batch_id": 3,
       "drift_score": 0.0,
       "algorithm_scores": {
-        "IsolationForest": 0.4847895,
+        "IsolationForest": 0.36,
         "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
+        "KMeans": 0.375,
+        "StatisticalRules": 0.49334999999999996
       },
-      "chosen_algorithm": "IsolationForest",
+      "chosen_algorithm": "StatisticalRules",
       "scoring_weights": {
         "drift": 0.4,
         "accuracy": 0.3,
         "cost": 0.3
       }
     },
-    "prev_hash": "9c4413abc16fd7dd",
-    "hash": "cdd3531bdcd8c76d"
+    "prev_hash": "1ad2a41d268fae9d",
+    "hash": "12a72858bc973b63"
   },
   {
     "seq": 25,
     "type": "MINING_RESULT",
-    "ts": 1775476657.6133883,
+    "ts": 1775634897.400004,
     "details": {
-      "batch_id": 7,
-      "chosen_algorithm": "IsolationForest",
+      "batch_id": 3,
+      "chosen_algorithm": "StatisticalRules",
       "drift_score": 0.0,
       "quality_score": 1.0,
       "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
+        "algorithm": "StatisticalRules",
+        "rules_found": 6,
+        "top_rules": [
+          [
+            "sensor_2",
+            "sensor_3",
+            0.93591874918185
+          ],
+          [
+            "sensor_0",
+            "sensor_2",
+            0.873989506518636
+          ],
+          [
+            "sensor_0",
+            "sensor_1",
+            0.8523045873399248
+          ]
+        ],
         "quality_score": 1.0
       }
     },
-    "prev_hash": "cdd3531bdcd8c76d",
-    "hash": "47d6077a1c814c9f"
+    "prev_hash": "12a72858bc973b63",
+    "hash": "a5d3938a499e90ed"
   },
   {
     "seq": 26,
-    "type": "DATA_INGESTED",
-    "ts": 1775476657.6146798,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634897.5153818,
     "details": {
-      "batch": 8,
-      "rows": 1391,
-      "cols": 128
+      "batch_id": 3,
+      "drift_score": 0.0,
+      "drift_detected": false,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H3_2",
+        "H3_18",
+        "H3_20"
+      ],
+      "mi_history_size": 28
     },
-    "prev_hash": "47d6077a1c814c9f",
-    "hash": "b955eb89d4f5e351"
+    "prev_hash": "a5d3938a499e90ed",
+    "hash": "c6850f256cda50e3"
   },
   {
     "seq": 27,
-    "type": "ALGO_SELECTED",
-    "ts": 1775476657.6166272,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.5397515,
     "details": {
-      "batch_id": 8,
-      "drift_score": 0.0,
-      "algorithm_scores": {
-        "IsolationForest": 0.49235264999999995,
-        "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
-      },
-      "chosen_algorithm": "IsolationForest",
-      "scoring_weights": {
-        "drift": 0.4,
-        "accuracy": 0.3,
-        "cost": 0.3
-      }
+      "batch_id": 3,
+      "hypothesis_id": "H3_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=0.99, MI=1.08) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 3.380191119963041e-17,
+      "p_value_synthetic": 3.380191119963041e-17,
+      "chi2": 71.10903211805557,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "b955eb89d4f5e351",
-    "hash": "aec65b2be45310e0"
+    "prev_hash": "c6850f256cda50e3",
+    "hash": "407a0040f5aafec3"
   },
   {
     "seq": 28,
-    "type": "MINING_RESULT",
-    "ts": 1775476657.8496032,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.5594783,
     "details": {
-      "batch_id": 8,
-      "chosen_algorithm": "IsolationForest",
-      "drift_score": 0.0,
-      "quality_score": 1.0,
-      "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
-        "quality_score": 1.0
-      }
+      "batch_id": 3,
+      "hypothesis_id": "H3_18",
+      "feature_a": "sensor_3",
+      "feature_b": "sensor_5",
+      "statement": "sensor_3 and sensor_5 show co-pattern (r=-0.99, MI=0.98) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 3.517111812210951e-27,
+      "p_value_synthetic": 3.517111812210951e-27,
+      "chi2": 116.59720674844725,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "aec65b2be45310e0",
-    "hash": "45ef137c8df1dd75"
+    "prev_hash": "407a0040f5aafec3",
+    "hash": "06c12cfc2f73ec39"
   },
   {
     "seq": 29,
-    "type": "DATA_INGESTED",
-    "ts": 1775476657.8509212,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634897.5791314,
     "details": {
-      "batch": 9,
-      "rows": 1391,
-      "cols": 128
+      "batch_id": 3,
+      "hypothesis_id": "H3_20",
+      "feature_a": "sensor_4",
+      "feature_b": "sensor_5",
+      "statement": "sensor_4 and sensor_5 show co-pattern (r=-0.98, MI=0.97) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 6.702661678858149e-23,
+      "p_value_synthetic": 2.769079780518407e-24,
+      "chi2": 97.06682366088437,
+      "valid": "True",
+      "confidence": "HIGH"
     },
-    "prev_hash": "45ef137c8df1dd75",
-    "hash": "bb153b108b917cbb"
+    "prev_hash": "06c12cfc2f73ec39",
+    "hash": "8a9da92388975567"
   },
   {
     "seq": 30,
-    "type": "ALGO_SELECTED",
-    "ts": 1775476657.8529198,
+    "type": "DATA_INGESTED",
+    "ts": 1775634897.5803275,
     "details": {
-      "batch_id": 9,
-      "drift_score": 0.0,
+      "batch": 4,
+      "rows": 197,
+      "cols": 128
+    },
+    "prev_hash": "8a9da92388975567",
+    "hash": "1e5f51058a9be4c1"
+  },
+  {
+    "seq": 31,
+    "type": "ALGO_SELECTED",
+    "ts": 1775634897.5823028,
+    "details": {
+      "batch_id": 4,
+      "drift_score": 1.0,
       "algorithm_scores": {
-        "IsolationForest": 0.49764685499999994,
-        "DBSCAN": 0.32999999999999996,
-        "StatisticalRules": 0.3435
+        "IsolationForest": 0.72,
+        "DBSCAN": 0.5700000000000001,
+        "KMeans": 0.6549999999999999,
+        "StatisticalRules": 0.676345
       },
       "chosen_algorithm": "IsolationForest",
       "scoring_weights": {
@@ -534,27 +635,788 @@
         "cost": 0.3
       }
     },
-    "prev_hash": "bb153b108b917cbb",
-    "hash": "6e6a217281faafc4"
+    "prev_hash": "1e5f51058a9be4c1",
+    "hash": "abf88487a4d189e9"
   },
   {
-    "seq": 31,
+    "seq": 32,
     "type": "MINING_RESULT",
-    "ts": 1775476658.0836911,
+    "ts": 1775634897.8653667,
     "details": {
-      "batch_id": 9,
+      "batch_id": 4,
       "chosen_algorithm": "IsolationForest",
+      "drift_score": 1.0,
+      "quality_score": 0.949238578680203,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.05,
+        "anomalies": 10,
+        "anomaly_rate": 0.050761421319796954,
+        "quality_score": 0.949238578680203
+      }
+    },
+    "prev_hash": "abf88487a4d189e9",
+    "hash": "002d3d82b1e3eeab"
+  },
+  {
+    "seq": 33,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634897.9806552,
+    "details": {
+      "batch_id": 4,
+      "drift_score": 1.0,
+      "drift_detected": true,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H4_5",
+        "H4_16",
+        "H4_2"
+      ],
+      "mi_history_size": 28
+    },
+    "prev_hash": "002d3d82b1e3eeab",
+    "hash": "8623d527c2da28d3"
+  },
+  {
+    "seq": 34,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.0105753,
+    "details": {
+      "batch_id": 4,
+      "hypothesis_id": "H4_5",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_5",
+      "statement": "sensor_0 and sensor_5 show co-pattern (r=-0.99, MI=1.13) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 6.528411881654075e-35,
+      "p_value_synthetic": 2.4659571910239115e-41,
+      "chi2": 151.9406035292874,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "8623d527c2da28d3",
+    "hash": "6f130b4c4ce5d3aa"
+  },
+  {
+    "seq": 35,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.0297153,
+    "details": {
+      "batch_id": 4,
+      "hypothesis_id": "H4_16",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_5",
+      "statement": "sensor_2 and sensor_5 show co-pattern (r=-0.99, MI=1.04) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 6.528411881654075e-35,
+      "p_value_synthetic": 1.1227926614552234e-39,
+      "chi2": 151.9406035292874,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "6f130b4c4ce5d3aa",
+    "hash": "8586c2798717c1cd"
+  },
+  {
+    "seq": 36,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.0484595,
+    "details": {
+      "batch_id": 4,
+      "hypothesis_id": "H4_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=0.98, MI=1.01) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 1.697214079791045e-40,
+      "p_value_synthetic": 3.58071352930344e-42,
+      "chi2": 177.50712501616403,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "8586c2798717c1cd",
+    "hash": "c6a5abc69fbb114a"
+  },
+  {
+    "seq": 37,
+    "type": "DATA_INGESTED",
+    "ts": 1775634898.0495548,
+    "details": {
+      "batch": 5,
+      "rows": 2300,
+      "cols": 128
+    },
+    "prev_hash": "c6a5abc69fbb114a",
+    "hash": "13ff04aefe471cd9"
+  },
+  {
+    "seq": 38,
+    "type": "ALGO_SELECTED",
+    "ts": 1775634898.051483,
+    "details": {
+      "batch_id": 5,
+      "drift_score": 1.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.7604314720812183,
+        "DBSCAN": 0.5700000000000001,
+        "KMeans": 0.6549999999999999,
+        "StatisticalRules": 0.676345
+      },
+      "chosen_algorithm": "IsolationForest",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
+    },
+    "prev_hash": "13ff04aefe471cd9",
+    "hash": "119fc5f5aed85819"
+  },
+  {
+    "seq": 39,
+    "type": "MINING_RESULT",
+    "ts": 1775634898.3817687,
+    "details": {
+      "batch_id": 5,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 1.0,
+      "quality_score": 0.95,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.05,
+        "anomalies": 115,
+        "anomaly_rate": 0.05,
+        "quality_score": 0.95
+      }
+    },
+    "prev_hash": "119fc5f5aed85819",
+    "hash": "6541461c544be3ea"
+  },
+  {
+    "seq": 40,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634898.5201619,
+    "details": {
+      "batch_id": 5,
+      "drift_score": 1.0,
+      "drift_detected": true,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H5_2",
+        "H5_11",
+        "H5_13"
+      ],
+      "mi_history_size": 28
+    },
+    "prev_hash": "6541461c544be3ea",
+    "hash": "70761c63877ecaa6"
+  },
+  {
+    "seq": 41,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.5404944,
+    "details": {
+      "batch_id": 5,
+      "hypothesis_id": "H5_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=0.97, MI=0.78) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 1.8806572329136878e-156,
+      "p_value_synthetic": 2.2954437656716416e-159,
+      "chi2": 710.1234782608695,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "70761c63877ecaa6",
+    "hash": "dc91ac8b3cb11801"
+  },
+  {
+    "seq": 42,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.559857,
+    "details": {
+      "batch_id": 5,
+      "hypothesis_id": "H5_11",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_3",
+      "statement": "sensor_2 and sensor_3 show co-pattern (r=0.99, MI=0.60) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 2177.671304347826,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "dc91ac8b3cb11801",
+    "hash": "9195a474acc38958"
+  },
+  {
+    "seq": 43,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.5791597,
+    "details": {
+      "batch_id": 5,
+      "hypothesis_id": "H5_13",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_5",
+      "statement": "sensor_2 and sensor_5 show co-pattern (r=-0.97, MI=0.52) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 2062.471304347826,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "9195a474acc38958",
+    "hash": "9ab6e6bebaaf4e88"
+  },
+  {
+    "seq": 44,
+    "type": "DATA_INGESTED",
+    "ts": 1775634898.5803018,
+    "details": {
+      "batch": 6,
+      "rows": 3613,
+      "cols": 128
+    },
+    "prev_hash": "9ab6e6bebaaf4e88",
+    "hash": "3d9464bcda1c2faa"
+  },
+  {
+    "seq": 45,
+    "type": "ALGO_SELECTED",
+    "ts": 1775634898.582404,
+    "details": {
+      "batch_id": 6,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.4288020304568528,
+        "DBSCAN": 0.32999999999999996,
+        "KMeans": 0.375,
+        "StatisticalRules": 0.516345
+      },
+      "chosen_algorithm": "StatisticalRules",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
+    },
+    "prev_hash": "3d9464bcda1c2faa",
+    "hash": "35cc9a4ad45bc4b8"
+  },
+  {
+    "seq": 46,
+    "type": "MINING_RESULT",
+    "ts": 1775634898.592578,
+    "details": {
+      "batch_id": 6,
+      "chosen_algorithm": "StatisticalRules",
       "drift_score": 0.0,
       "quality_score": 1.0,
       "result": {
-        "algorithm": "IsolationForest",
-        "contamination": 0.1,
-        "anomalies": 0,
-        "anomaly_rate": 0.0,
+        "algorithm": "StatisticalRules",
+        "rules_found": 6,
+        "top_rules": [
+          [
+            "sensor_2",
+            "sensor_3",
+            0.9428793109337162
+          ],
+          [
+            "sensor_0",
+            "sensor_2",
+            0.9093797347436019
+          ],
+          [
+            "sensor_0",
+            "sensor_3",
+            0.8616350530986906
+          ]
+        ],
         "quality_score": 1.0
       }
     },
-    "prev_hash": "6e6a217281faafc4",
-    "hash": "bf51fcb8d258f99f"
+    "prev_hash": "35cc9a4ad45bc4b8",
+    "hash": "5ef3f5d90de90395"
+  },
+  {
+    "seq": 47,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634898.7413673,
+    "details": {
+      "batch_id": 6,
+      "drift_score": 0.0,
+      "drift_detected": false,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H6_2",
+        "H6_12",
+        "H6_5"
+      ],
+      "mi_history_size": 28
+    },
+    "prev_hash": "5ef3f5d90de90395",
+    "hash": "1369f6ff2821f54e"
+  },
+  {
+    "seq": 48,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.7646186,
+    "details": {
+      "batch_id": 6,
+      "hypothesis_id": "H6_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=0.98, MI=0.43) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 2997.6974363798618,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "1369f6ff2821f54e",
+    "hash": "e843181b553f7548"
+  },
+  {
+    "seq": 49,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.789531,
+    "details": {
+      "batch_id": 6,
+      "hypothesis_id": "H6_12",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_5",
+      "statement": "sensor_2 and sensor_5 show co-pattern (r=-0.98, MI=0.34) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 2878.668247640705,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "e843181b553f7548",
+    "hash": "729e281661219ef3"
+  },
+  {
+    "seq": 50,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.8128452,
+    "details": {
+      "batch_id": 6,
+      "hypothesis_id": "H6_5",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_5",
+      "statement": "sensor_0 and sensor_5 show co-pattern (r=-0.97, MI=0.32) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 3023.257266274176,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "729e281661219ef3",
+    "hash": "f9ccf208f8499a18"
+  },
+  {
+    "seq": 51,
+    "type": "DATA_INGESTED",
+    "ts": 1775634898.8140144,
+    "details": {
+      "batch": 7,
+      "rows": 294,
+      "cols": 128
+    },
+    "prev_hash": "f9ccf208f8499a18",
+    "hash": "0c19a316dfefd284"
+  },
+  {
+    "seq": 52,
+    "type": "ALGO_SELECTED",
+    "ts": 1775634898.8162885,
+    "details": {
+      "batch_id": 7,
+      "drift_score": 0.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.4288020304568528,
+        "DBSCAN": 0.32999999999999996,
+        "KMeans": 0.375,
+        "StatisticalRules": 0.5324415
+      },
+      "chosen_algorithm": "StatisticalRules",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
+    },
+    "prev_hash": "0c19a316dfefd284",
+    "hash": "fe27018bdc7a193e"
+  },
+  {
+    "seq": 53,
+    "type": "MINING_RESULT",
+    "ts": 1775634898.827979,
+    "details": {
+      "batch_id": 7,
+      "chosen_algorithm": "StatisticalRules",
+      "drift_score": 0.0,
+      "quality_score": 1.0,
+      "result": {
+        "algorithm": "StatisticalRules",
+        "rules_found": 6,
+        "top_rules": [
+          [
+            "sensor_2",
+            "sensor_3",
+            0.9660612018019815
+          ],
+          [
+            "sensor_0",
+            "sensor_2",
+            0.9568828261909457
+          ],
+          [
+            "sensor_0",
+            "sensor_3",
+            0.9405533534255494
+          ]
+        ],
+        "quality_score": 1.0
+      }
+    },
+    "prev_hash": "fe27018bdc7a193e",
+    "hash": "08689c21e41a8f43"
+  },
+  {
+    "seq": 54,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634898.9478772,
+    "details": {
+      "batch_id": 7,
+      "drift_score": 0.0,
+      "drift_detected": false,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H7_13",
+        "H7_2",
+        "H7_26"
+      ],
+      "mi_history_size": 28
+    },
+    "prev_hash": "08689c21e41a8f43",
+    "hash": "0a5b0236b0b372c1"
+  },
+  {
+    "seq": 55,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.9679942,
+    "details": {
+      "batch_id": 7,
+      "hypothesis_id": "H7_13",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_3",
+      "statement": "sensor_2 and sensor_3 show co-pattern (r=0.97, MI=0.50) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 1.104187168284385e-37,
+      "p_value_synthetic": 5.291288801543006e-39,
+      "chi2": 164.62585034013605,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "0a5b0236b0b372c1",
+    "hash": "5502a42055193374"
+  },
+  {
+    "seq": 56,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634898.9873257,
+    "details": {
+      "batch_id": 7,
+      "hypothesis_id": "H7_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=0.99, MI=0.43) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 2.0956349213888988e-50,
+      "p_value_synthetic": 6.1684804762635854e-52,
+      "chi2": 222.91156462585033,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "5502a42055193374",
+    "hash": "ac8ebbf7311ca2d3"
+  },
+  {
+    "seq": 57,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634899.005865,
+    "details": {
+      "batch_id": 7,
+      "hypothesis_id": "H7_26",
+      "feature_a": "sensor_5",
+      "feature_b": "sensor_7",
+      "statement": "sensor_5 and sensor_7 show co-pattern (r=0.98, MI=0.44) in stable regime [drift_score=0.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 2.0956349213888988e-50,
+      "p_value_synthetic": 1.623979157749331e-44,
+      "chi2": 222.91156462585033,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "ac8ebbf7311ca2d3",
+    "hash": "8ef0cac48b311c10"
+  },
+  {
+    "seq": 58,
+    "type": "DATA_INGESTED",
+    "ts": 1775634899.0069795,
+    "details": {
+      "batch": 8,
+      "rows": 470,
+      "cols": 128
+    },
+    "prev_hash": "8ef0cac48b311c10",
+    "hash": "aa5695234e1ffb8b"
+  },
+  {
+    "seq": 59,
+    "type": "ALGO_SELECTED",
+    "ts": 1775634899.0089076,
+    "details": {
+      "batch_id": 8,
+      "drift_score": 1.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.7888020304568528,
+        "DBSCAN": 0.5700000000000001,
+        "KMeans": 0.6549999999999999,
+        "StatisticalRules": 0.7037090500000001
+      },
+      "chosen_algorithm": "IsolationForest",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
+    },
+    "prev_hash": "aa5695234e1ffb8b",
+    "hash": "ea2658fdacaed907"
+  },
+  {
+    "seq": 60,
+    "type": "MINING_RESULT",
+    "ts": 1775634899.2809553,
+    "details": {
+      "batch_id": 8,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 1.0,
+      "quality_score": 0.948936170212766,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.05,
+        "anomalies": 24,
+        "anomaly_rate": 0.05106382978723404,
+        "quality_score": 0.948936170212766
+      }
+    },
+    "prev_hash": "ea2658fdacaed907",
+    "hash": "d0fcab645292007e"
+  },
+  {
+    "seq": 61,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634899.410467,
+    "details": {
+      "batch_id": 8,
+      "drift_score": 1.0,
+      "drift_detected": true,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H8_14",
+        "H8_15",
+        "H8_19"
+      ],
+      "mi_history_size": 28
+    },
+    "prev_hash": "d0fcab645292007e",
+    "hash": "e1e82c5dd944ea89"
+  },
+  {
+    "seq": 62,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634899.4327605,
+    "details": {
+      "batch_id": 8,
+      "hypothesis_id": "H8_14",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_3",
+      "statement": "sensor_2 and sensor_3 show co-pattern (r=0.99, MI=1.23) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 3.233758391936839e-93,
+      "p_value_synthetic": 1.4038013352379823e-91,
+      "chi2": 419.4382978723404,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "e1e82c5dd944ea89",
+    "hash": "490386e2c6fe808d"
+  },
+  {
+    "seq": 63,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634899.4573116,
+    "details": {
+      "batch_id": 8,
+      "hypothesis_id": "H8_15",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_4",
+      "statement": "sensor_2 and sensor_4 show co-pattern (r=0.98, MI=1.15) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 1.5759932604577304e-80,
+      "p_value_synthetic": 1.5759932604577304e-80,
+      "chi2": 361.15744680851066,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "490386e2c6fe808d",
+    "hash": "0c8e0ea9c5eef247"
+  },
+  {
+    "seq": 64,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634899.476591,
+    "details": {
+      "batch_id": 8,
+      "hypothesis_id": "H8_19",
+      "feature_a": "sensor_3",
+      "feature_b": "sensor_4",
+      "statement": "sensor_3 and sensor_4 show co-pattern (r=0.95, MI=1.10) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 1.5759932604577304e-80,
+      "p_value_synthetic": 2.3892143955445086e-88,
+      "chi2": 361.15744680851066,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "0c8e0ea9c5eef247",
+    "hash": "d00baef57f94af8d"
+  },
+  {
+    "seq": 65,
+    "type": "DATA_INGESTED",
+    "ts": 1775634899.4778492,
+    "details": {
+      "batch": 9,
+      "rows": 3600,
+      "cols": 128
+    },
+    "prev_hash": "d00baef57f94af8d",
+    "hash": "fcf9970c5a470ca1"
+  },
+  {
+    "seq": 66,
+    "type": "ALGO_SELECTED",
+    "ts": 1775634899.4798663,
+    "details": {
+      "batch_id": 9,
+      "drift_score": 1.0,
+      "algorithm_scores": {
+        "IsolationForest": 0.8085656766389459,
+        "DBSCAN": 0.5700000000000001,
+        "KMeans": 0.6549999999999999,
+        "StatisticalRules": 0.7037090500000001
+      },
+      "chosen_algorithm": "IsolationForest",
+      "scoring_weights": {
+        "drift": 0.4,
+        "accuracy": 0.3,
+        "cost": 0.3
+      }
+    },
+    "prev_hash": "fcf9970c5a470ca1",
+    "hash": "c442b59fe71fa68b"
+  },
+  {
+    "seq": 67,
+    "type": "MINING_RESULT",
+    "ts": 1775634899.8127148,
+    "details": {
+      "batch_id": 9,
+      "chosen_algorithm": "IsolationForest",
+      "drift_score": 1.0,
+      "quality_score": 0.95,
+      "result": {
+        "algorithm": "IsolationForest",
+        "contamination": 0.05,
+        "anomalies": 180,
+        "anomaly_rate": 0.05,
+        "quality_score": 0.95
+      }
+    },
+    "prev_hash": "c442b59fe71fa68b",
+    "hash": "11523d21dd0b5644"
+  },
+  {
+    "seq": 68,
+    "type": "HYPOTHESES_GENERATED",
+    "ts": 1775634899.963662,
+    "details": {
+      "batch_id": 9,
+      "drift_score": 1.0,
+      "drift_detected": true,
+      "n_hypotheses": 3,
+      "hypothesis_ids": [
+        "H9_2",
+        "H9_14",
+        "H9_3"
+      ],
+      "mi_history_size": 28
+    },
+    "prev_hash": "11523d21dd0b5644",
+    "hash": "143fe71d4e4d80fb"
+  },
+  {
+    "seq": 69,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634899.9845595,
+    "details": {
+      "batch_id": 9,
+      "hypothesis_id": "H9_2",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_2",
+      "statement": "sensor_0 and sensor_2 show co-pattern (r=1.00, MI=0.60) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 3298.587777777778,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "143fe71d4e4d80fb",
+    "hash": "ec8f2a45f9a65213"
+  },
+  {
+    "seq": 70,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634900.0038311,
+    "details": {
+      "batch_id": 9,
+      "hypothesis_id": "H9_14",
+      "feature_a": "sensor_2",
+      "feature_b": "sensor_3",
+      "statement": "sensor_2 and sensor_3 show co-pattern (r=1.00, MI=0.60) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 3344.6944444444443,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "ec8f2a45f9a65213",
+    "hash": "f2be5c7b4f51a612"
+  },
+  {
+    "seq": 71,
+    "type": "HYPOTHESIS_VALIDATED",
+    "ts": 1775634900.028246,
+    "details": {
+      "batch_id": 9,
+      "hypothesis_id": "H9_3",
+      "feature_a": "sensor_0",
+      "feature_b": "sensor_3",
+      "statement": "sensor_0 and sensor_3 show co-pattern (r=0.99, MI=0.54) under drift [drift_score=1.0000] -> investigate combined feature for gas classification",
+      "p_value_chi2": 0.0,
+      "p_value_synthetic": 0.0,
+      "chi2": 3132.2677777777776,
+      "valid": "True",
+      "confidence": "HIGH"
+    },
+    "prev_hash": "f2be5c7b4f51a612",
+    "hash": "830a09246ca0a63e"
   }
 ]

@@ -27,10 +27,17 @@ from aadmf.agents.planner import PlannerAgent
 from aadmf.agents.validator import ValidatorAgent
 from aadmf.core.state import SystemState
 from aadmf.drift.page_hinkley import PageHinkleyDriftDetector
-from aadmf.orchestrator.langgraph_flow import LangGraphOrchestrator
 from aadmf.orchestrator.manual import ManualOrchestrator
 from aadmf.provenance.dict_chain import DictChainLogger
 from aadmf.streaming.uci_loader import UCIGasSensorLoader
+
+try:
+    from aadmf.orchestrator.langgraph_flow import LangGraphOrchestrator
+except ModuleNotFoundError as e:
+    if e.name == "langgraph":
+        LangGraphOrchestrator = None
+    else:
+        raise
 
 
 def _load_config(path: str = "config.yaml") -> dict:
@@ -174,13 +181,18 @@ def _run_parity_test(config: dict) -> None:
 
 def _run_conditional_routing_tests(config: dict) -> None:
     """Verify low-drift skip and high-drift execution of hypothesizer node."""
-    loader = _make_loader(config)
+    # Conditional assertions below require drift-gated routing mode.
+    cfg = copy.deepcopy(config)
+    cfg.setdefault("execution", {})
+    cfg["execution"]["always_hypothesize"] = False
+
+    loader = _make_loader(cfg)
     X, y = loader.next_batch()
     if X is None or y is None:
         raise RuntimeError("Could not load first batch for conditional routing test")
 
     # Low drift case: branch should skip hypothesizer/validator.
-    low_graph = LangGraphOrchestrator(copy.deepcopy(config))
+    low_graph = LangGraphOrchestrator(copy.deepcopy(cfg))
     low_calls = {"hyp": 0, "val": 0}
 
     orig_low_hyp = low_graph.hypothesizer.run
@@ -210,7 +222,7 @@ def _run_conditional_routing_tests(config: dict) -> None:
             low_graph.prov.close()
 
     # High drift case: branch should run hypothesizer/validator.
-    high_graph = LangGraphOrchestrator(copy.deepcopy(config))
+    high_graph = LangGraphOrchestrator(copy.deepcopy(cfg))
     high_calls = {"hyp": 0, "val": 0}
 
     orig_high_hyp = high_graph.hypothesizer.run
@@ -242,6 +254,11 @@ def _run_conditional_routing_tests(config: dict) -> None:
 def main() -> None:
     if not Path("config.yaml").exists():
         raise FileNotFoundError("config.yaml not found in current working directory")
+
+    if LangGraphOrchestrator is None:
+        print("SKIPPED: langgraph is not installed for this Python interpreter.")
+        print("Install with: pip install langgraph")
+        return
 
     config = _load_config("config.yaml")
 

@@ -32,6 +32,10 @@ class PlannerAgent(BaseAgent):
             "drift_weight": 0.6,
             "cost": 0.4,
         },
+        "KMeans": {
+            "drift_weight": 0.7,
+            "cost": 0.25,
+        },
         "StatisticalRules": {
             "drift_weight": 0.4,
             "cost": 0.1,

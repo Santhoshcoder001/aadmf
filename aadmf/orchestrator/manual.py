@@ -15,7 +15,13 @@ warnings.filterwarnings(
     module=r"langchain_core\._api\.deprecation",
 )
 
-from langgraph.graph import StateGraph, END
+try:
+    from langgraph.graph import StateGraph, END
+    _HAS_LANGGRAPH = True
+except Exception:
+    StateGraph = None
+    END = None
+    _HAS_LANGGRAPH = False
 
 from aadmf.core.state import SystemState, BatchResult
 from aadmf.drift.page_hinkley import PageHinkleyDriftDetector
@@ -26,6 +32,39 @@ from aadmf.agents.validator import ValidatorAgent
 from aadmf.provenance.dict_chain import DictChainLogger
 from aadmf.streaming.simulator import StreamingSimulator
 from aadmf.streaming.uci_loader import UCIGasSensorLoader
+
+
+def _resolve_drift_config(config: dict) -> dict:
+    """Resolve drift config with backward-compatible key support.
+
+    Supports both:
+    - ``drift_detection`` (legacy, currently used across repo)
+    - ``drift_detector`` (newer config naming)
+    """
+    legacy = dict(config.get("drift_detection", {}))
+    modern = dict(config.get("drift_detector", {}))
+
+    if modern:
+        method = str(modern.get("method", "page_hinkley")).lower()
+        if method != "page_hinkley":
+            print(f"[WARN] Unsupported drift_detector.method='{method}', using page_hinkley.")
+        merged = {
+            "delta": modern.get("delta", legacy.get("delta", 0.005)),
+            "threshold": modern.get("threshold", legacy.get("threshold", 50.0)),
+            "alpha": modern.get("alpha", legacy.get("alpha", 0.9999)),
+            "min_batch_size": modern.get("min_batch_size", legacy.get("min_batch_size", 1)),
+            "use_relative_change": modern.get("use_relative_change", legacy.get("use_relative_change", False)),
+        }
+    else:
+        merged = {
+            "delta": legacy.get("delta", 0.005),
+            "threshold": legacy.get("threshold", 50.0),
+            "alpha": legacy.get("alpha", 0.9999),
+            "min_batch_size": legacy.get("min_batch_size", 1),
+            "use_relative_change": legacy.get("use_relative_change", False),
+        }
+
+    return merged
 
 
 def _create_provenance_logger(config: dict):
@@ -58,10 +97,22 @@ def _create_provenance_logger(config: dict):
             logger.log("SYSTEM", {"message": "Provenance backend: Neo4j"})
             return logger
         except Exception as e:
+            err_text = str(e).rstrip(".")
             # Fallback to DictChainLogger if Neo4j connection fails
-            print(f"[WARN] Neo4j connection failed: {e}. Falling back to DictChainLogger.")
+            print(
+                "[WARN] Neo4j unavailable. Install 'neo4j' and start Neo4j Desktop or a Docker "
+                f"container, then check the Bolt URI. Error: {err_text}. Falling back to DictChainLogger."
+            )
             logger = DictChainLogger()
-            logger.log("SYSTEM", {"message": f"Provenance backend switch: Neo4j failed, using DictChainLogger. Error: {str(e)}"})
+            logger.log(
+                "SYSTEM",
+                {
+                    "message": (
+                        "Provenance backend switch: Neo4j failed, using DictChainLogger. "
+                        f"Install hint: pip install neo4j; start Neo4j Desktop/Docker; error: {err_text}"
+                    )
+                },
+            )
             return logger
     else:
         # Default to DictChainLogger
@@ -114,13 +165,17 @@ class ManualOrchestrator:
         self._langgraph_flow = None
 
         # Instantiate all agents with the provenance logger
-        self.detector = PageHinkleyDriftDetector(**config.get("drift_detection", {}))
+        self.detector = PageHinkleyDriftDetector(**_resolve_drift_config(config))
         self.planner = PlannerAgent(config, self.prov)
         self.miner = MinerAgent(config, self.prov)
         self.hypothesizer = HypothesizerAgent(config, self.prov)
         self.validator = ValidatorAgent(config, self.prov)
 
-        self.graph = self._build_graph()
+        self.graph = self._build_graph() if _HAS_LANGGRAPH else None
+
+        if not _HAS_LANGGRAPH and self.use_langgraph:
+            print("[WARN] langgraph is not installed. Falling back to manual orchestrator mode.")
+            self.use_langgraph = False
 
         if self.use_langgraph:
             # Lazy import keeps backward compatibility for environments that only
@@ -131,6 +186,9 @@ class ManualOrchestrator:
 
     def _build_graph(self):
         """Build LangGraph StateGraph using Section 5.2 node/edge design."""
+        if not _HAS_LANGGRAPH:
+            return None
+
         graph = StateGraph(SystemState)
 
         # Add nodes
@@ -169,6 +227,16 @@ class ManualOrchestrator:
         return state
 
     def _log_batch_node(self, state: SystemState) -> SystemState:
+        return state
+
+    def _run_pipeline_stepwise(self, state: SystemState) -> SystemState:
+        """Sequential fallback when langgraph dependency is unavailable."""
+        state = self._drift_detect_node(state)
+        state = self.planner.run(state)
+        state = self._mine_node(state)
+        state = self.hypothesizer.run(state)
+        state = self.validator.run(state)
+        state = self._log_batch_node(state)
         return state
 
     def run(self, streamer) -> dict:
@@ -218,7 +286,10 @@ class ManualOrchestrator:
                 "error": None,
             }
 
-            state = self.graph.invoke(state)
+            if self.graph is not None:
+                state = self.graph.invoke(state)
+            else:
+                state = self._run_pipeline_stepwise(state)
 
             quality_score = float(state["mining_result"].get("quality_score", 0.0))
 

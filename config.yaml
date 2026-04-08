@@ -12,20 +12,30 @@ streaming:
 uci_loader:
   data_dir: data/raw
   batch_numbers: null      # null means all 10 batches
-  normalize: true
+  normalize: false
   use_ucimlrepo: true
 
 # Backward-compatible alias for current entrypoint code
 uci_streaming:
   data_dir: data/raw
   batch_numbers: null      # null means all 10 batches
-  normalize: true
+  normalize: false
   use_ucimlrepo: true
 
 drift_detection:
-  delta: 0.005
-  threshold: 50.0
-  alpha: 0.9999
+  delta: 0.0
+  threshold: 0.05
+  alpha: 0.99
+  min_batch_size: 100
+  use_relative_change: true
+
+# New naming (kept in sync with drift_detection for compatibility)
+drift_detector:
+  method: page_hinkley
+  threshold: 0.05
+  alpha: 0.99
+  min_batch_size: 100
+  use_relative_change: true
 
 planner:
   w_drift: 0.4
@@ -35,14 +45,19 @@ planner:
 
 isolation_forest:
   seed: 42
+  base_contamination: 0.05
+  adaptive_formula: fixed
+  n_jobs: 1
 
 dbscan:
-  base_eps: 1.5
+  base_eps: 2.0
+  adaptive_formula: fixed
   min_samples: 5
+  n_jobs: 1
 
 statistical_rules:
   k_features: 4
-  corr_threshold: 0.3
+  corr_threshold: 0.2
 
 hypothesizer:
   corr_threshold: 0.3

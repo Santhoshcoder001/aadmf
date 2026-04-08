@@ -45,9 +45,14 @@ class PageHinkleyDriftDetector:
         alpha:     EWMA forgetting factor. Default 0.9999.
     """
 
-    def __init__(self, delta: float = 0.005,
-                 threshold: float = 50.0,
-                 alpha: float = 0.9999):
+    def __init__(
+        self,
+        delta: float = 0.005,
+        threshold: float = 50.0,
+        alpha: float = 0.9999,
+        min_batch_size: int = 1,
+        use_relative_change: bool = False,
+    ):
         """
         Initialize the EWMA-enhanced Page-Hinkley detector.
 
@@ -59,6 +64,9 @@ class PageHinkleyDriftDetector:
         self.delta = delta
         self.threshold = threshold
         self.alpha = alpha
+        self.min_batch_size = max(1, int(min_batch_size))
+        self.use_relative_change = bool(use_relative_change)
+        self.prev_x_t = None
 
         # Initialize state variables (YOUR ALGORITHM init step)
         self.x_mean = 0.0          # x̄
@@ -91,19 +99,33 @@ class PageHinkleyDriftDetector:
                 - drift_detected: True if PH > threshold
                 - drift_score: normalized PH value in [0.0, 1.0]
         """
+        if len(X) < self.min_batch_size:
+            return False, 0.0
+
         # Step 1: Extract mean of primary sensor (sensor_0)
         if isinstance(X, pd.DataFrame):
             x_t = X.iloc[:, 0].mean()  # mean of first column (sensor_0)
         else:
             x_t = X[:, 0].mean()  # numpy array fallback
 
+        if self.use_relative_change:
+            # In relative mode, use batch-to-batch relative change so detector
+            # responds to temporal drift rather than absolute sensor magnitude.
+            if self.prev_x_t is None:
+                self.prev_x_t = float(x_t)
+                return False, 0.0
+            signal_t = (float(x_t) - self.prev_x_t) / max(abs(self.prev_x_t), 1e-9)
+            self.prev_x_t = float(x_t)
+        else:
+            signal_t = float(x_t)
+
         # Step 2: Update EWMA mean
-        # x̄ ← α × x̄ + (1−α) × x_t
-        self.x_mean = self.alpha * self.x_mean + (1 - self.alpha) * x_t
+        # x̄ ← α × x̄ + (1−α) × x_t (x_t is signal_t in relative mode)
+        self.x_mean = self.alpha * self.x_mean + (1 - self.alpha) * signal_t
 
         # Step 3: Update cumulative deviation
         # M ← M + (x_t − x̄ − δ)
-        m = x_t - self.x_mean - self.delta
+        m = signal_t - self.x_mean - self.delta
         self.M = self.M + m
 
         # Step 4: Track running minimum
@@ -138,4 +160,5 @@ class PageHinkleyDriftDetector:
         self.x_mean = 0.0
         self.M = 0.0
         self.M_min = 0.0
+        self.prev_x_t = None
         self.logger.info("PageHinkleyDriftDetector state reset")

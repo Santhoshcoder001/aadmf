@@ -45,16 +45,61 @@ class UCIGasSensorLoader:
         normalize: bool = True,
         use_ucimlrepo: bool = True,
     ) -> None:
-        self.data_dir = Path(data_dir)
         self.batch_numbers = self._validate_batch_numbers(batch_numbers)
         self.normalize = normalize
         self.use_ucimlrepo = use_ucimlrepo
         self._current_index = 0
 
+        self._configured_data_dir = Path(data_dir)
+        self.data_dir = self._resolve_data_dir(self._configured_data_dir)
+
         self._batch_paths: Dict[int, Path] = {
             b: self.data_dir / f"batch{b}.dat" for b in self.batch_numbers
         }
         self._all_batches: Optional[List[Tuple[pd.DataFrame, pd.Series]]] = None
+
+    def _has_required_batches(self, candidate_dir: Path) -> bool:
+        return all((candidate_dir / f"batch{b}.dat").exists() for b in self.batch_numbers)
+
+    def _resolve_data_dir(self, configured_dir: Path) -> Path:
+        """Resolve to a usable local batch directory when possible.
+
+        This keeps existing behavior when ``configured_dir`` is valid, and falls
+        back to common project folders (``dataset1``, ``dataset2``, ``data/raw``)
+        to avoid hard failures from stale config paths.
+        """
+        candidates: List[Path] = [configured_dir]
+
+        # Include workspace-root-based candidates for relative paths.
+        repo_root = Path(__file__).resolve().parents[2]
+        if not configured_dir.is_absolute():
+            candidates.append(repo_root / configured_dir)
+
+        candidates.extend(
+            [
+                repo_root / "data" / "raw",
+                repo_root / "dataset1",
+                repo_root / "dataset2",
+                Path("data/raw"),
+                Path("dataset1"),
+                Path("dataset2"),
+            ]
+        )
+
+        seen = set()
+        unique_candidates: List[Path] = []
+        for c in candidates:
+            key = str(c.resolve()) if c.exists() else str(c)
+            if key in seen:
+                continue
+            seen.add(key)
+            unique_candidates.append(c)
+
+        for candidate in unique_candidates:
+            if self._has_required_batches(candidate):
+                return candidate
+
+        return configured_dir
 
     @staticmethod
     def _validate_batch_numbers(batch_numbers: Optional[Sequence[int]]) -> List[int]:
@@ -154,6 +199,72 @@ class UCIGasSensorLoader:
             dataset = fetch_ucirepo(id=270)
             X_raw = dataset.data.features.copy()
             y_raw = dataset.data.targets
+
+            # Some ucimlrepo mirrors expose sparse-token strings (e.g. "2:1.23")
+            # in feature cells and keep "label;concentration" in the row index.
+            # Parsing those tokens preserves the original UCI sparse .dat semantics.
+            sample_token = None
+            if not X_raw.empty:
+                for val in X_raw.iloc[0].tolist():
+                    if pd.notna(val):
+                        sample_token = str(val)
+                        break
+            sparse_token_mode = (
+                sample_token is not None
+                and ":" in sample_token
+                and isinstance(X_raw.index, pd.Index)
+                and len(X_raw.index) > 0
+                and ";" in str(X_raw.index[0])
+            )
+
+            if sparse_token_mode:
+                # Infer dimensionality from max sparse index across token cells.
+                n_features = 0
+                for _, row in X_raw.iterrows():
+                    for val in row.tolist():
+                        if pd.isna(val):
+                            continue
+                        tok = str(val)
+                        if ":" not in tok:
+                            continue
+                        idx_str = tok.split(":", 1)[0]
+                        if idx_str.isdigit():
+                            n_features = max(n_features, int(idx_str))
+
+                if n_features == 0:
+                    return None
+
+                rows: List[np.ndarray] = []
+                labels: List[int] = []
+                for idx, row in X_raw.iterrows():
+                    tokens = [str(idx)]
+                    tokens.extend(str(v) for v in row.tolist() if pd.notna(v))
+                    line = " ".join(tokens)
+                    label, dense_row = self._parse_line(line, n_features)
+                    labels.append(label)
+                    rows.append(dense_row)
+
+                X_arr = np.vstack(rows)
+                X_arr = self._normalize_batch(X_arr, self.normalize)
+                X_feat = pd.DataFrame(X_arr, columns=[f"sensor_{i}" for i in range(n_features)])
+                y_series = pd.Series(labels, name="gas_class")
+
+                # Dataset provides 10 chronological batches; split evenly when batch
+                # metadata is unavailable in this sparse-token representation.
+                idx_splits = np.array_split(np.arange(len(X_feat)), 10)
+                batches: Dict[int, Tuple[pd.DataFrame, pd.Series]] = {}
+                for b, idxs in enumerate(idx_splits, start=1):
+                    X = X_feat.iloc[idxs].reset_index(drop=True)
+                    y = y_series.iloc[idxs].reset_index(drop=True)
+                    batches[b] = (X, y)
+
+                out: List[Tuple[pd.DataFrame, pd.Series]] = []
+                for b in self.batch_numbers:
+                    if b not in batches:
+                        return None
+                    out.append(batches[b])
+                return out
+
             if isinstance(y_raw, pd.DataFrame):
                 y_series = y_raw.iloc[:, 0]
             else:
@@ -210,7 +321,8 @@ class UCIGasSensorLoader:
             if loaded is None:
                 raise FileNotFoundError(
                     "Unable to load UCI Gas Sensor batches. "
-                    f"Expected batch files in {self.data_dir} or ucimlrepo dataset id=270 availability."
+                    f"Expected batch files in {self.data_dir} "
+                    f"(configured: {self._configured_data_dir}) or ucimlrepo dataset id=270 availability."
                 )
             self._all_batches = loaded
 

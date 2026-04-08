@@ -29,6 +29,34 @@ from aadmf.agents.validator import ValidatorAgent
 from aadmf.provenance.dict_chain import DictChainLogger
 
 
+def _resolve_drift_config(config: dict) -> dict:
+    """Resolve drift config with backward-compatible key support."""
+    legacy = dict(config.get("drift_detection", {}))
+    modern = dict(config.get("drift_detector", {}))
+
+    if modern:
+        method = str(modern.get("method", "page_hinkley")).lower()
+        if method != "page_hinkley":
+            print(f"[WARN] Unsupported drift_detector.method='{method}', using page_hinkley.")
+        merged = {
+            "delta": modern.get("delta", legacy.get("delta", 0.005)),
+            "threshold": modern.get("threshold", legacy.get("threshold", 50.0)),
+            "alpha": modern.get("alpha", legacy.get("alpha", 0.9999)),
+            "min_batch_size": modern.get("min_batch_size", legacy.get("min_batch_size", 1)),
+            "use_relative_change": modern.get("use_relative_change", legacy.get("use_relative_change", False)),
+        }
+    else:
+        merged = {
+            "delta": legacy.get("delta", 0.005),
+            "threshold": legacy.get("threshold", 50.0),
+            "alpha": legacy.get("alpha", 0.9999),
+            "min_batch_size": legacy.get("min_batch_size", 1),
+            "use_relative_change": legacy.get("use_relative_change", False),
+        }
+
+    return merged
+
+
 def _create_provenance_logger(config: dict):
     """Factory function to create the configured provenance logger.
 
@@ -59,10 +87,22 @@ def _create_provenance_logger(config: dict):
             logger.log("SYSTEM", {"message": "Provenance backend: Neo4j"})
             return logger
         except Exception as e:
+            err_text = str(e).rstrip(".")
             # Fallback to DictChainLogger if Neo4j connection fails
-            print(f"[WARN] Neo4j connection failed: {e}. Falling back to DictChainLogger.")
+            print(
+                "[WARN] Neo4j unavailable. Install 'neo4j' and start Neo4j Desktop or a Docker "
+                f"container, then check the Bolt URI. Error: {err_text}. Falling back to DictChainLogger."
+            )
             logger = DictChainLogger()
-            logger.log("SYSTEM", {"message": f"Provenance backend switch: Neo4j failed, using DictChainLogger. Error: {str(e)}"})
+            logger.log(
+                "SYSTEM",
+                {
+                    "message": (
+                        "Provenance backend switch: Neo4j failed, using DictChainLogger. "
+                        f"Install hint: pip install neo4j; start Neo4j Desktop/Docker; error: {err_text}"
+                    )
+                },
+            )
             return logger
     else:
         # Default to DictChainLogger
@@ -87,7 +127,7 @@ class LangGraphOrchestrator:
         self.prov = provenance_logger if provenance_logger is not None else _create_provenance_logger(config)
 
         # Keep original agent implementations untouched; only orchestration is new.
-        self.detector = PageHinkleyDriftDetector(**config.get("drift_detection", {}))
+        self.detector = PageHinkleyDriftDetector(**_resolve_drift_config(config))
         self.planner = PlannerAgent(config, self.prov)
         self.miner = MinerAgent(config, self.prov)
         self.hypothesizer = HypothesizerAgent(config, self.prov)
@@ -117,18 +157,12 @@ class LangGraphOrchestrator:
     def _build_graph(self):
         """Build the StateGraph topology and return compiled graph.
 
-        Graph structure:
-        1. drift_detect -> 2. plan -> 3. mine
-        4. Conditional branch from mine:
-           - If drift_score > 0.1 OR drift_detected is True:
-             mine -> hypothesize -> validate -> log_batch -> END
-           - Otherwise:
-             mine -> log_batch -> END
-
-        Why conditional edges:
-        - Hypothesis generation and validation are drift-focused operations.
-        - Gating these nodes prevents unnecessary compute when drift evidence is
-          weak, while still preserving all existing agent behavior when invoked.
+          Graph structure:
+          1. drift_detect -> 2. plan -> 3. mine
+          2. By default (Week 7 behavior), always run:
+              mine -> hypothesize -> validate -> log_batch -> END
+          3. Optional drift-gated mode can be enabled with:
+              execution.always_hypothesize = false
         """
         graph = StateGraph(SystemState)
 
@@ -144,16 +178,23 @@ class LangGraphOrchestrator:
         graph.add_edge("drift_detect", "plan")
         graph.add_edge("plan", "mine")
 
-        # Drift-triggered conditional branch after mining.
-        graph.add_conditional_edges(
-            "mine",
-            lambda s: "hypothesize" if (s["drift_score"] > 0.1 or s["drift_detected"] is True) else "log_batch",
-            {"hypothesize": "hypothesize", "log_batch": "log_batch"},
-        )
+        execution_cfg = self.config.get("execution", {})
+        always_hypothesize = bool(execution_cfg.get("always_hypothesize", True))
 
-        # validate is only reached when hypothesis generation was executed.
-        graph.add_edge("hypothesize", "validate")
-        graph.add_edge("validate", "log_batch")
+        if always_hypothesize:
+            graph.add_edge("mine", "hypothesize")
+            graph.add_edge("hypothesize", "validate")
+            graph.add_edge("validate", "log_batch")
+        else:
+            # Legacy drift-triggered branch (optional).
+            graph.add_conditional_edges(
+                "mine",
+                lambda s: "hypothesize" if (s["drift_score"] > 0.1 or s["drift_detected"] is True) else "log_batch",
+                {"hypothesize": "hypothesize", "log_batch": "log_batch"},
+            )
+            graph.add_edge("hypothesize", "validate")
+            graph.add_edge("validate", "log_batch")
+
         graph.add_edge("log_batch", END)
 
         return graph.compile()

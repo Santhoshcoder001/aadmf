@@ -40,7 +40,14 @@ class StatRulesMiner(BaseMiner):
             for j in range(i + 1, len(cols)):
                 feat_a = cols[i]
                 feat_b = cols[j]
-                r, _ = pearsonr(X_bin.iloc[:, i], X_bin.iloc[:, j])
+                x_i = X_bin.iloc[:, i]
+                x_j = X_bin.iloc[:, j]
+
+                # Pearson is undefined for constant vectors; skip these pairs.
+                if x_i.nunique(dropna=False) <= 1 or x_j.nunique(dropna=False) <= 1:
+                    continue
+
+                r, _ = pearsonr(x_i, x_j)
                 if abs(r) > corr_threshold:
                     rules.append((feat_a, feat_b, float(r)))
 

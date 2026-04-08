@@ -12,7 +12,10 @@ import re
 import time
 from typing import Any, Dict, List, Tuple
 
-from neo4j import GraphDatabase
+try:
+    from neo4j import GraphDatabase
+except Exception:
+    GraphDatabase = None
 
 
 class Neo4jLogger:
@@ -38,11 +41,27 @@ class Neo4jLogger:
         if not password:
             raise ValueError("Neo4j password is required")
 
+        if GraphDatabase is None:
+            raise RuntimeError(
+                "Neo4j Python package is not installed. Install it with 'pip install neo4j' "
+                "and start a local Neo4j instance (Neo4j Desktop or Docker on bolt://localhost:7687)."
+            )
+
+        self.uri = uri
+        self.user = user
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
         self._closed = False
         self.prev_hash = "GENESIS"
-        self._ensure_schema()
-        self._sync_prev_hash()
+        try:
+            self._ensure_schema()
+            self._sync_prev_hash()
+        except Exception as exc:
+            self.close()
+            raise RuntimeError(
+                "Neo4j connection failed. Start Neo4j Desktop or a Docker container, "
+                "confirm Bolt is reachable at the configured URI, and verify credentials. "
+                f"Configured URI: {uri}. Original error: {exc}"
+            ) from exc
 
     @classmethod
     def from_config(cls, config: dict) -> "Neo4jLogger":

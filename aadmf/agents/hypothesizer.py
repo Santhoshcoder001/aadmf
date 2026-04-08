@@ -242,12 +242,18 @@ class HypothesizerAgent(BaseAgent):
             for j in range(i + 1, n_features):
                 feature_a = X.columns[i]
                 feature_b = X.columns[j]
+                x_i = X.iloc[:, i]
+                x_j = X.iloc[:, j]
+
+                # Pearson is undefined when either input is constant.
+                if x_i.nunique(dropna=False) <= 1 or x_j.nunique(dropna=False) <= 1:
+                    continue
 
                 # Patent Claim 2: Correlation baseline
-                r, p = pearsonr(X.iloc[:, i], X.iloc[:, j])
+                r, p = pearsonr(x_i, x_j)
 
                 # Patent Claim 2: Real mutual information (captures non-linear deps)
-                mi = self._mi_proxy(X.iloc[:, i], X.iloc[:, j])
+                mi = self._mi_proxy(x_i, x_j)
 
                 # Patent Claim 2: update MI history and compute delta_MI.
                 # O(1) dict access keeps this efficient for up to 28 pairs per batch.

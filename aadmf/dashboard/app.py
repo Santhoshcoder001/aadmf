@@ -15,10 +15,10 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+from urllib.parse import quote
 
 import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components
 
 try:
     import plotly.express as px
@@ -294,7 +294,7 @@ def _render_drift_chart(batch_df: pd.DataFrame) -> None:
     drift_fig.update_xaxes(title="batch identifier", dtick=1)
     drift_fig.update_yaxes(title="drift score", range=[0, 1])
     drift_fig = _plotly_theme(drift_fig)
-    st.plotly_chart(drift_fig, use_container_width=True)
+    st.plotly_chart(drift_fig, width="stretch")
 
 
 def _render_algorithm_chart(batch_df: pd.DataFrame) -> None:
@@ -309,6 +309,7 @@ def _render_algorithm_chart(batch_df: pd.DataFrame) -> None:
         "IsolationForest": "#60a5fa",
         "StatisticalRules": "#fb923c",
         "DBSCAN": "#4ade80",
+        "KMeans": "#f472b6",
         "Unknown": "#94a3b8",
     }
     algo_fig = px.bar(
@@ -326,7 +327,7 @@ def _render_algorithm_chart(batch_df: pd.DataFrame) -> None:
     algo_fig.update_xaxes(title="count (selections)", dtick=1)
     algo_fig.update_yaxes(title="algorithm")
     algo_fig = _plotly_theme(algo_fig)
-    st.plotly_chart(algo_fig, use_container_width=True)
+    st.plotly_chart(algo_fig, width="stretch")
 
 
 def _render_section(title: str, caption: str) -> None:
@@ -564,10 +565,11 @@ def main() -> None:
                 {"seq": event.get("seq"), "type": event.get("type"), "prev_hash": event.get("prev_hash"), "hash": event.get("hash")}
                 for event in events[:12]
             ]
-            st.dataframe(pd.DataFrame(preview_rows), use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(preview_rows), width="stretch", hide_index=True)
         else:
             graph_html = _render_provenance_graph(events)
-            components.html(graph_html, height=500, scrolling=True)
+            data_url = "data:text/html;charset=utf-8," + quote(graph_html)
+            st.iframe(data_url, height=500, width="stretch")
     else:
         st.markdown("<div class='aadmf-empty'>No provenance events available to render graph.</div>", unsafe_allow_html=True)
 

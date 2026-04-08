@@ -17,6 +17,21 @@ from aadmf.mining.base import BaseMiner
 class DBSCANMiner(BaseMiner):
     """DBSCAN with drift-adaptive epsilon."""
 
+    def _compute_eps(self, drift_score: float) -> float:
+        base_eps = float(self.config.get("base_eps", 1.5))
+        formula = str(self.config.get("adaptive_formula", "shrink_0.30")).lower()
+
+        if formula == "fixed":
+            eps = base_eps
+        elif formula == "shrink_0.50":
+            eps = base_eps * (1.0 - 0.50 * float(drift_score))
+        elif formula == "inverse_0.50":
+            eps = base_eps / (1.0 + 0.50 * float(drift_score))
+        else:
+            eps = base_eps * (1.0 - 0.30 * float(drift_score))
+
+        return max(0.05, eps)
+
     def mine(self, X: pd.DataFrame, drift_score: float) -> dict:
         """
         1. Compute adaptive eps from drift_score
@@ -28,9 +43,8 @@ class DBSCANMiner(BaseMiner):
 
         quality_score = clusters / (clusters + 1)
         """
-        base_eps = self.config.get("base_eps", 1.5)
         min_samples = self.config.get("min_samples", 5)
-        eps = base_eps * (1.0 - 0.3 * drift_score)
+        eps = self._compute_eps(drift_score)
 
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)

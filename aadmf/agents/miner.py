@@ -18,11 +18,13 @@ class MinerAgent(BaseAgent):
         # Import and instantiate mining wrappers
         from aadmf.mining.isolation_forest import IFMiner
         from aadmf.mining.dbscan import DBSCANMiner
+        from aadmf.mining.kmeans import KMeansMiner
         from aadmf.mining.statistical_rules import StatRulesMiner
 
         self._miners = {
             "IsolationForest": IFMiner(config.get("isolation_forest", {})),
             "DBSCAN": DBSCANMiner(config.get("dbscan", {})),
+            "KMeans": KMeansMiner(config.get("kmeans", {})),
             "StatisticalRules": StatRulesMiner(config.get("statistical_rules", {})),
         }
 

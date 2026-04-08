@@ -43,7 +43,7 @@ Why this matters: the project depends on several third-party packages, and the v
 Install the libraries used by the pipeline, tests, dashboard, and optional integrations.
 
 ```powershell
-pip install pyyaml pandas numpy scipy scikit-learn langgraph ucimlrepo neo4j streamlit plotly pyvis streamlit-autorefresh ollama pytest
+pip install -r requirements.txt
 ```
 
 Why this matters: without these packages, the orchestrator, mining algorithms, dashboard, or tests may fail to import.
@@ -56,14 +56,39 @@ Update `config.yaml` so the loader can find your UCI batch files.
 uci_loader:
 	data_dir: dataset1
 	batch_numbers: null
-	normalize: true
+	normalize: false
 	use_ucimlrepo: true
 
 uci_streaming:
 	data_dir: dataset1
 	batch_numbers: null
-	normalize: true
+	normalize: false
 	use_ucimlrepo: true
+
+drift_detection:
+	delta: 0.0
+	threshold: 0.05
+	alpha: 0.99
+
+drift_detector:
+	method: page_hinkley
+	threshold: 0.05
+	alpha: 0.99
+	min_batch_size: 100
+	use_relative_change: true
+
+isolation_forest:
+	base_contamination: 0.05
+	adaptive_formula: fixed
+	seed: 42
+
+dbscan:
+	base_eps: 2.0
+	adaptive_formula: fixed
+	min_samples: 5
+
+statistical_rules:
+	corr_threshold: 0.2
 ```
 
 Why this matters: the pipeline needs a valid batch source. If the local files are missing, the fallback UCI download path can still be used when `use_ucimlrepo` is `true`.
@@ -202,7 +227,7 @@ provenance:
 python poc.py
 ```
 
-Why this matters: Neo4j is optional, but if it is configured incorrectly the pipeline will fall back to the local dict-chain logger.
+Why this matters: Neo4j is optional. If it is unavailable, the pipeline now prints a clearer install/start hint and falls back to the local dict-chain logger.
 
 ### Step 16: Optional week-6 tuning workflow
 
@@ -236,11 +261,54 @@ Why this matters: this is the shortest practical sequence for validating the pip
 
 ---
 
+## Demonstration of Adaptive Behavior
+
+Use this checklist when presenting the system behavior in a live demo.
+
+### What to run
+
+```powershell
+python poc.py
+streamlit run aadmf/dashboard/app.py
+```
+
+### What to verify in output
+
+1. Drift score is non-zero on selected batches (spikes are expected in later UCI batches).
+2. Planner does not stay fixed on one miner; it should switch between `StatisticalRules` and `IsolationForest` as drift changes.
+3. Hypothesis feed includes batch context and validation state for each generated statement.
+4. Provenance integrity check remains intact before tamper demo and fails after tampering.
+
+### Current tuned settings applied
+
+1. `IsolationForest`: `base_contamination=0.05`, `adaptive_formula=fixed`
+2. `DBSCAN`: `base_eps=2.0`, `adaptive_formula=fixed`
+3. `StatisticalRules`: `corr_threshold=0.2`
+
+These values are derived from Week 6 experiment artifacts in `experiments/results/week6_final_recommendation.md` and `experiments/results/miner_tuning_results.csv`.
+
+### Demonstration Results (Latest Successful Run)
+
+Latest `python poc.py` run confirms adaptive behavior is active:
+
+1. Drift spikes detected on batches **4, 5, 8, and 9** (`drift_detected=True`, `drift_score=1.000000`).
+2. Planner switched algorithms by regime:
+	- `StatisticalRules`: 6 batches (stable/low drift)
+	- `IsolationForest`: 4 batches (high drift)
+3. Average quality score: **0.9398**.
+4. Hypotheses generated: **30**; valid hypotheses: **30**; HVR: **1.0000**.
+5. Provenance integrity check remains intact (`intact=True`) before tamper demo.
+
+This run demonstrates end-to-end adaptation: drift detection influences planner choice, miner behavior changes by batch, and validated hypotheses/provenance remain consistent.
+
+---
+
 ## 1) Project Structure (Quick Orientation)
 
 - `poc.py`: Main entry point for end-to-end execution
 - `config.yaml`: Runtime configuration (streaming, drift, planner, LLM, provenance)
 - `aadmf/`: Framework package (agents, orchestrators, mining, provenance, dashboard)
+- `requirements.txt`: Pinned dependency set for setup and reproducibility
 - `test_uci_loader.py`: UCI loader + orchestrator smoke test
 - `test_langgraph.py`: Manual vs LangGraph parity and routing test
 - `test_llm_hypothesis.py`: Template vs Ollama-phrased hypothesis comparison
@@ -261,6 +329,7 @@ Why this matters: this is the shortest practical sequence for validating the pip
 
 1. Neo4j 5.x (for graph provenance backend)
 2. Ollama (for LLM hypothesis phrasing)
+3. scikit-learn extras already included through `requirements.txt`
 
 ---
 
@@ -277,12 +346,12 @@ python -m pip install --upgrade pip
 Install core dependencies used by this codebase:
 
 ```powershell
-pip install pyyaml pandas numpy scipy scikit-learn langgraph ucimlrepo neo4j streamlit plotly pyvis streamlit-autorefresh ollama pytest
+pip install -r requirements.txt
 ```
 
 Notes:
 
-- There is no `requirements.txt` in this repository currently, so install is command-based.
+- `requirements.txt` is pinned so the dashboard, agents, and tests all use the same versions.
 - `ollama`, `neo4j`, and `pyvis` are optional if you do not use those paths.
 
 ---
@@ -299,22 +368,44 @@ Current config behavior:
 - `poc.py` defaults full mode to UCI dataset.
 - `config.yaml` currently points `uci_loader.data_dir` to `data/raw`.
 
+The current implementation also auto-resolves common local folders such as `dataset1` and `dataset2` before falling back to `ucimlrepo`.
+
 ### Recommended local setup (already common in this repo)
 
-If your batches are under `dataset1/`, update `config.yaml`:
+If your batches are under `dataset1/`, the following config is the recommended default:
 
 ```yaml
 uci_loader:
 	data_dir: dataset1
 	batch_numbers: null
-	normalize: true
+	normalize: false
 	use_ucimlrepo: true
 
 uci_streaming:
 	data_dir: dataset1
 	batch_numbers: null
-	normalize: true
+	normalize: false
 	use_ucimlrepo: true
+
+drift_detector:
+	method: page_hinkley
+	threshold: 0.05
+	alpha: 0.99
+	min_batch_size: 100
+	use_relative_change: true
+
+isolation_forest:
+	base_contamination: 0.05
+	adaptive_formula: fixed
+	seed: 42
+
+dbscan:
+	base_eps: 2.0
+	adaptive_formula: fixed
+	min_samples: 5
+
+statistical_rules:
+	corr_threshold: 0.2
 ```
 
 If you keep `data/raw` and files are missing, loader attempts `ucimlrepo` fallback when `use_ucimlrepo: true`.
@@ -414,6 +505,8 @@ Dashboard sections include:
 4. Provenance graph visualization
 5. Tamper-demo interaction
 
+The provenance graph now uses `st.iframe` to avoid Streamlit component deprecation warnings.
+
 In sidebar, verify paths:
 
 - Provenance JSON path: `provenance.json`
@@ -482,6 +575,8 @@ python poc.py
 
 If Neo4j is unavailable, orchestrator code falls back to in-memory dict-chain logger and prints a warning.
 
+The warning now includes a concise setup hint: install the `neo4j` Python package, start Neo4j Desktop or Docker, and verify the Bolt URI.
+
 ---
 
 ## 11) Run Week-6 Tuning Workflow
@@ -509,7 +604,7 @@ If you want a practical "do this in order" flow:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install pyyaml pandas numpy scipy scikit-learn langgraph ucimlrepo neo4j streamlit plotly pyvis streamlit-autorefresh ollama pytest
+pip install -r requirements.txt
 
 # 2) Run core pipeline
 python poc.py
@@ -585,6 +680,7 @@ After successful runs, common outputs include:
 - Console batch summary table from orchestrator
 - CSV files in `experiments/results/` from tuning/evaluation scripts
 - Optional HTML graph files from Neo4j visualization scripts
+- `PROJECT_SUMMARY.md` for a one-page architecture overview
 
 ---
 

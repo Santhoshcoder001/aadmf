@@ -7,9 +7,10 @@ from typing import Any, Dict
 class OllamaClient:
     """Small wrapper to phrase hypotheses with Ollama and safe fallback behavior."""
 
-    def __init__(self, model: str = "phi3:mini", temperature: float = 0.2) -> None:
+    def __init__(self, model: str = "phi3:mini", temperature: float = 0.2, max_words: int = 35) -> None:
         self.model = model
         self.temperature = temperature
+        self.max_words = max_words
 
     def _template_statement(self, hypothesis_dict: Dict[str, Any]) -> str:
         feature_a = str(hypothesis_dict.get("feature_a", "feature_a"))
@@ -43,12 +44,31 @@ class OllamaClient:
         }
 
         return (
-            "You are a data science assistant. Write exactly one clear sentence for an analyst. "
-            "Keep it concise (max 35 words). Include both feature names and the rounded "
+            "You are a data science assistant for drift monitoring. "
+            "Write exactly one sentence for an analyst and output plain text only. "
+            f"Keep it concise (max {self.max_words} words). Include both feature names and the rounded "
             f"correlation value r={round(correlation, 1)}. "
-            "Do not invent new metrics, causes, or values. "
+            "Mention whether this is under drift or stable regime using the provided flag. "
+            "Do not invent new metrics, causes, or values. Do not add markdown or bullet points. "
             f"Hypothesis data: {json.dumps(prompt_data, default=str)}"
         )
+
+    def _postprocess_text(self, text: str) -> str:
+        cleaned = " ".join(str(text).strip().split())
+        if not cleaned:
+            return ""
+
+        # Keep only the first sentence if model returns multiple.
+        for sep in [". ", "! ", "? "]:
+            if sep in cleaned:
+                first = cleaned.split(sep, 1)[0].strip()
+                if first:
+                    if not first.endswith((".", "!", "?")):
+                        first += "."
+                    cleaned = first
+                break
+
+        return cleaned.strip('"')
 
     def _extract_llm_text(self, response: Any) -> str:
         # Support both dict-like responses and typed objects from recent ollama SDK versions.
@@ -92,7 +112,7 @@ class OllamaClient:
         rounded_corr = str(round(float(hypothesis_dict.get("correlation", 0.0)), 1))
 
         words = re.findall(r"\S+", text)
-        if len(words) >= 50:
+        if len(words) > self.max_words:
             return False
         if feature_a and feature_a not in text:
             return False
@@ -116,7 +136,7 @@ class OllamaClient:
                 messages=[{"role": "user", "content": prompt}],
                 options={"temperature": self.temperature},
             )
-            llm_text = self._extract_llm_text(response)
+            llm_text = self._postprocess_text(self._extract_llm_text(response))
             if self._is_valid_output(hypothesis_dict, llm_text):
                 return llm_text
             return template
